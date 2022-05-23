@@ -1,6 +1,7 @@
 <?php
 require_once "./db.php";
 require_once "./common.php";
+require_once "./email.php";
 
 session_start();
 print_r($_SESSION);
@@ -8,6 +9,7 @@ if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
 }
+
 if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['full_name']) && isset($_POST['date_of_birth']) && isset($_POST['address'])) {
     $email = $_POST['email'];
     $phone_number = $_POST['phone_number'];
@@ -15,8 +17,16 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     $date_of_birth = $_POST['date_of_birth'];
     $address = $_POST['address'];
 
-    $username_password = register($phone_number, $email, $full_name, $date_of_birth, $address);
-    print_r($username_password);
+    $data = register($phone_number, $email, $full_name, $date_of_birth, $address);
+    if ($data['code'] === 0) {
+        $subject = "Thông tin tài khoản và mật khẩu";
+        $body = "Tài khoản: " . $data['username'] . "<br/>" . "Mật khẩu: " . $username_password['password'];
+        $email_address = $email;
+        send_email($subject, $body, $email_address);
+    } else if ($data['code'] === 1) {
+        $error_message = $data['error'];
+    }
+
 }
 ?>
 <!DOCTYPE html>
@@ -54,6 +64,7 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     <?php include_once './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4" method="POST" action="register.php">
+      <div><?php echo $error_message ?></div>
         <h1>Đăng ký tài khoản</h1>
         <div class="form-group">
           <label for="phone_number">Số điện thoại: </label>
@@ -114,10 +125,5 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
         <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
       </form>
     </div>
-    <?php
-if (isset($username_password) && $username_password['code'] === 0) {
-    echo '<a href="login.php"><button class="btn btn-success">Chuyển đến trang đăng nhập</button></a>';
-}
-?>
   </body>
 </html>

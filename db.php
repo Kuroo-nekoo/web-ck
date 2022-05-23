@@ -30,7 +30,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
 
     $result = $stm->get_result();
     if ($result->num_rows > 0) {
-        return array('code' => 1, 'error' => 'Account already exists');
+        return array('code' => 1, 'error' => 'Tài khoản đã tồn tại');
     }
 
     for ($i = 0; $i < 10; $i++) {
@@ -202,5 +202,3 @@ function check_email_phone_number($email_phone_number)
 
     return array('code' => 0);
 }
-
-
