@@ -9,7 +9,16 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password']) && is
     && $_POST['new_password'] === $_POST['confirm_new_password'] && $_POST['new_password'] !== '' && $_POST['confirm_new_password'] !== '') {
     $new_password = $_POST['new_password'];
     $old_password = $_POST['old_password'];
-    change_password($old_password, $new_password, $user_id);
+    if (strlen($new_password) <= 6 && strlen($old_password)) {
+        $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
+    } else {
+        $data = change_password($old_password, $new_password, $user_id);
+        if ($data['code'] === 0) {
+            header('Location: login.php');
+        } else if ($data['code'] === 1) {
+            $error_message = $data['error'];
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -45,7 +54,12 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password']) && is
   <body style="height: 100vh;" >
   <?php require_once './navbar.php'?>
       <div class="d-flex justify-content-center align-items-center h-100">
-    <form class="col-4 border" action="change_password.php" method="POST">
+      <form class="col-4 border" action="change_password.php" method="POST">
+        <div class="text-danger h6">
+          <?php
+echo isset($error_message) ? $error_message : '';
+?>
+        </div>
         <h1 class="text-center ">Change password</h1>
         <div class="form-group">
           <label for="new_password">Old Password: </label>

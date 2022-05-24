@@ -8,21 +8,6 @@ if (isset($_SESSION['is_new_user'])) {
     check_new_user($is_new_user);
 }
 
-print_r($_SESSION);
-
-if (isset($_SESSION['started']) && time() - $_SESSION['started'] < 60 && isset($_POST['otp'])) {
-    $otp = $_SESSION['otp'];
-} else {
-    $otp = gen_otp();
-
-    $_SESSION['started'] = time();
-    $_SESSION['otp'] = $otp;
-}
-if (isset($_SESSION['otp'])) {
-    $_SESSION['started'] = time();
-}
-
-echo $otp;
 
 if (isset($_POST['otp']) && $_POST['otp'] === $otp) {
     header('Location: change_password_first_time.php');

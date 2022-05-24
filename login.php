@@ -13,19 +13,19 @@ if (isset($_POST['username']) && $_POST['password']) {
     $password = $_POST['password'];
     if (strlen($username) !== 10) {
         $error_message = "Vui lòng nhập đúng định dạng của tên đăng nhập";
-    } else if (strlen($password) <= 6) {
-        $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
+    } else if (strlen($password) < 6) {
+        $error_message = "Vui lòng nhập mật khẩu có độ dài ít nhất 6 ký tự";
     }
 
     $data = login($username, $password);
     if (isset($data['IS_LOCKED']) && $user_data['IS_LOCKED'] === 0) {
         echo "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
     } else if ($data['code'] === 0) {
-        $is_new_user = $user_data['data']['IS_NEW_USER'];
+        $is_new_user = $data['data']['IS_NEW_USER'];
         unset($_SESSION['user_id']);
         unset($_SESSION['is_new_user']);
-        $_SESSION['user_id'] = $user_data['data']['USER_ID'];
-        $_SESSION['is_new_user'] = $user_data['data']['IS_NEW_USER'];
+        $_SESSION['user_id'] = $data['data']['USER_ID'];
+        $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
         if ($is_new_user === 0) {
             header('Location: change_password_first_time.php');
         }

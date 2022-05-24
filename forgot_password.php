@@ -1,6 +1,7 @@
 <?php
 require_once './db.php';
 require_once './common.php';
+require_once './email.php';
 session_start();
 
 if (isset($_SESSION['is_new_user'])) {
@@ -10,8 +11,26 @@ if (isset($_SESSION['is_new_user'])) {
 
 if (isset($_POST['email_phone_number']) && $_POST['email_phone_number'] !== '') {
     $email_phone_number = $_POST['email_phone_number'];
-    if (check_email_phone_number($email_phone_number)['code'] === 0) {
-        header('Location: reset_password.php');
+
+    $data = check_email_phone_number($email_phone_number);
+    if ($data['code'] === 0) {
+        if (isset($_SESSION['started']) && time() - $_SESSION['started'] < 60 && isset($_POST['otp'])) {
+            $otp = $_SESSION['otp'];
+        } else {
+            $otp = gen_otp();
+            $_SESSION['started'] = time();
+            $_SESSION['otp'] = $otp;
+            $subject = "OTP";
+            $body = "Mã OTP của bạn là: $otp";
+            send_email($subject, $body, $email_phone_number);
+        }
+
+        if (isset($_SESSION['otp'])) {
+            $_SESSION['started'] = time();
+        }
+        // header('Location: reset_password.php');
+    } else if ($data['code'] === 1) {
+        $error_message = $data['error'];
     }
 }
 
@@ -53,6 +72,13 @@ if (isset($_POST['otp']) && $_POST['otp'] === $otp) {
     <?php include './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-4 border" action="forgot_password.php" method="POST">
+        <div class="text-danger h6">
+          <?php
+if (isset($error_message) && !empty($error_message)) {
+    echo $error_message;
+}
+?>
+        </div>
         <h1>Quên mật khẩu:</h1>
         <div class="form-group">
           <label for="otp">Số điện thoại/ email:</label>

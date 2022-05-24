@@ -11,11 +11,18 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
     && isset($user_id)) {
     $new_password = $_POST['new_password'];
     $_SESSION['is_new_user'] = 0;
-    change_password_first_time($new_password, $user_id);
-    if (change_password_first_time($new_password, $user_id)) {
-        header('Location: login.php');
+    if (strlen($new_password) < 6) {
+        $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
+    } else {
+        $data = change_password_first_time($new_password, $user_id);
+        if ($data['code'] === 0) {
+            header('Location: login.php');
+        } else if ($data['code'] === 1) {
+            $error_message = $data['error'];
+        }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,6 +59,11 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
       <div class="d-flex justify-content-center align-items-center h-100">
     <form class="col-4 border" action="change_password_first_time.php" method="POST">
         <h1 class="text-center ">Change password</h1>
+        <div class="text-danger">
+          <?php
+echo $error_message;
+?>
+        </div>
         <div class="form-group">
           <label for="new_password">Password: </label>
           <input
