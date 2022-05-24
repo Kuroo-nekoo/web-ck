@@ -94,7 +94,8 @@ function login($username, $password)
                 if (!$stm->execute()) {
                     return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
                 }
-                $stm->execute();
+
+                return array('code' => 1, 'error' => 'Tài khoản đã bị khóa tạm thời', 'abnormal_login_count' => $abnormal_login_count);
             } else if ($data['ABNORMAL_LOGIN_COUNT'] === 1) {
                 $is_locked = 0;
                 $fail_login_count = 0;
@@ -106,7 +107,7 @@ function login($username, $password)
                 if (!$stm->execute()) {
                     return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
                 }
-                $stm->execute();
+                return array('code' => 1, 'error' => 'Tài khoản đã bị khóa vĩnh viễn', 'is_locked' => $is_locked);
             }
         }
         return array('code' => 1, 'error' => 'Sai mật khẩu');
@@ -209,25 +210,27 @@ function get_users_data()
 {
     $conn = connect_database();
     $sql = "SELECT * FROM ACCOUNT";
-    $result = $conn -> query($sql);
+    $result = $conn->query($sql);
     $data = array();
-    while(( $row = $result->fetch_assoc())){
+    while (($row = $result->fetch_assoc())) {
         $data[] = $row;
     }
     return array('code' => 0, 'data' => $data);
 }
 
-function date_sort($a, $b) {
+function date_sort($a, $b)
+{
     return strtotime($a) - strtotime($b);
 }
 
-function get_users_data_sortdate() {
+function get_users_data_sortdate()
+{
     $conn = connect_database();
     $sql = "SELECT * FROM ACCOUNT";
-    $result = $conn -> query($sql);
+    $result = $conn->query($sql);
     $data = array();
     usort($result['DATE_CREATED'], 'date_sort');
-    while(( $row = $result->fetch_assoc())){
+    while (($row = $result->fetch_assoc())) {
         $data[] = $row;
     }
     return array('code' => 0, 'data' => $data);

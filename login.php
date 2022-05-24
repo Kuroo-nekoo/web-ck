@@ -11,26 +11,37 @@ if (isset($_SESSION['is_new_user'])) {
 if (isset($_POST['username']) && $_POST['password']) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+
     if (strlen($username) !== 10) {
         $error_message = "Vui lòng nhập đúng định dạng của tên đăng nhập";
     } else if (strlen($password) < 6) {
         $error_message = "Vui lòng nhập mật khẩu có độ dài ít nhất 6 ký tự";
-    }
-
-    $data = login($username, $password);
-    if (isset($data['IS_LOCKED']) && $user_data['IS_LOCKED'] === 0) {
-        echo "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
-    } else if ($data['code'] === 0) {
-        $is_new_user = $data['data']['IS_NEW_USER'];
-        unset($_SESSION['user_id']);
-        unset($_SESSION['is_new_user']);
-        $_SESSION['user_id'] = $data['data']['USER_ID'];
-        $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
-        if ($is_new_user === 0) {
-            header('Location: change_password_first_time.php');
+    } else {
+        $data = login($username, $password);
+        if (isset($data['is_locked']) && $data['is_locked'] === 0) {
+            $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
+            $is_locked = 1;
+        } else if ($data['code'] === 0) {
+            $is_new_user = $data['data']['IS_NEW_USER'];
+            unset($_SESSION['user_id']);
+            unset($_SESSION['is_new_user']);
+            $_SESSION['user_id'] = $data['data']['USER_ID'];
+            $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
+            if ($is_new_user === 0) {
+                header('Location: change_password_first_time.php');
+            }
+        } else if ($data['code'] === 1) {
+            if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
+                if (isset($_SESSION['temp_lock_time']) && (time() - $_SESSION['temp_lock_time'] < 60)) {
+                    $is_temp_locked = 1;
+                    $error_message = 'Tài khoản đã bị khóa tạm thời';
+                } else {
+                    $is_temp_locked = 1;
+                    $_SESSION['temp_lock_time'] = time();
+                    $error_message = 'Tài khoản đã bị khóa tạm thời';
+                }
+            }
         }
-    } else if ($data['code'] === 1) {
-        $error_message = $data['error'];
     }
 }
 
@@ -68,6 +79,13 @@ if (isset($_POST['username']) && $_POST['password']) {
   <body>
     <?php include './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
+      <?php if (isset($is_locked) && $is_locked === 1) {?>
+        <div class="alert alert-danger" role="alert">
+          <?php echo $error_message ?>
+        </div>
+      <?php } else if (isset($is_temp_locked) && $is_temp_locked === 1) {?>
+        <div class="alert alert-danger"><?php echo $error_message ?></div>
+        <?php } else {?>
       <form class="col-4 border" action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>
         <div class="text-danger h-6">
@@ -75,7 +93,7 @@ if (isset($_POST['username']) && $_POST['password']) {
 if (isset($error_message) && strlen($error_message) !== 0) {
     echo $error_message;
 }
-?>
+    ?>
         </div>
         <div class="form-group">
           <label for="username">Tên đăng nhập: </label>
@@ -102,6 +120,7 @@ if (isset($error_message) && strlen($error_message) !== 0) {
         </button>
         <div class="text-right"><a href="./forgot_password.php">For got password</a></div>
       </form>
+      <?php }?>
     </div>
   </body>
 </html>
