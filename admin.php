@@ -1,14 +1,17 @@
 <?php
 require_once './common.php';
 require_once './db.php';
-if(get_users_data()['code'] == 0)
-  $users = get_users_data()['data'];
-else $users = [];
+if (get_users_data()['code'] == 0) {
+    $users = get_users_data()['data'];
+} else {
+    $users = [];
+}
 
-if(get_users_data_sort_date()['code'] == 0)
-  $users_sort_date_created = get_users_data_sort_date()['data'];
-else $users_sort_date_created = [];
-
+if (get_users_data_sort_date()['code'] == 0) {
+    $users_sort_date_created = get_users_data_sort_date()['data'];
+} else {
+    $users_sort_date_created = [];
+}
 
 ?>
 <!DOCTYPE html>
@@ -44,20 +47,20 @@ else $users_sort_date_created = [];
                 </tr>
               </thead>
               <tbody>
-                <?php if($users):?>
-                <?php foreach ($users as $user) : 
-                  if($user['IS_ACTIVATED'] == 0):
-                ?>
-                  <tr>
-                    <td><?php echo $user['USER_ID'] ?></td>
-                    <td><?php echo $user['USERNAME'] ?></td>
-                    <td><?php echo $user['FULL_NAME'] ?></td>
-                    <td><?php echo $user['EMAIL'] ?></td>
-                    <td class='bg-warning'><?php echo 'Chưa xác thực' ?></td>
-                  </tr>
-                <?php endif; ?>
-                <?php endforeach; ?>
-                <?php endif; ?>
+                <?php if ($users): ?>
+                <?php foreach ($users as $user):
+    if ($user['ACTIVATED_STATE'] === 'chờ xác minh'):
+    ?>
+		                  <tr>
+		                    <td><?php echo $user['USER_ID'] ?></td>
+		                    <td><?php echo $user['USERNAME'] ?></td>
+		                    <td><?php echo $user['FULL_NAME'] ?></td>
+		                    <td><?php echo $user['EMAIL'] ?></td>
+		                    <td class='bg-warning'><?php echo 'Chưa xác thực' ?></td>
+		                  </tr>
+		                <?php endif;?>
+                <?php endforeach;?>
+                <?php endif;?>
 
               </tbody>
             </table>
@@ -71,30 +74,30 @@ else $users_sort_date_created = [];
                 <tr>
                     <th>User ID</th>
                     <th>Mã só tài khoản</th>
-                    <th>Tên tài khoản</th>
+                    <th>Tên tài khoẢn</th>
                     <th>Email</th>
                     <th>Ngày tạo</th>
                     <th>Trạng thái</th>
                 </tr>
               </thead>
               <tbody>
-                <?php if($users_sort_date_created):?>
+                <?php if ($users_sort_date_created): ?>
 
-                <?php foreach ($users_sort_date_created as $user) : 
-                  if($user['IS_ACTIVATED'] == 1): 
-                ?>
-                  <tr>
-                    <td><?php echo $user['USER_ID'] ?></td>
-                    <td><?php echo $user['USERNAME'] ?></td>
-                    <td><?php echo $user['FULL_NAME'] ?></td>
-                    <td><?php echo $user['EMAIL'] ?></td>
-                    <td><?php echo $user['DATE_CREATED'] ?></td>
-                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
-                  </tr>
-                <?php endif; ?>
-                
-                <?php endforeach; ?>
-                <?php endif; ?>
+                <?php foreach ($users_sort_date_created as $user):
+    if ($user['ACTIVATED_STATE'] == 'đã xác minh'):
+    ?>
+		                  <tr>
+		                    <td><?php echo $user['USER_ID'] ?></td>
+		                    <td><?php echo $user['USERNAME'] ?></td>
+		                    <td><?php echo $user['FULL_NAME'] ?></td>
+		                    <td><?php echo $user['EMAIL'] ?></td>
+		                    <td><?php echo $user['DATE_CREATED'] ?></td>
+		                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
+		                  </tr>
+		                <?php endif;?>
+
+                <?php endforeach;?>
+                <?php endif;?>
 
               </tbody>
             </table>
@@ -115,29 +118,29 @@ else $users_sort_date_created = [];
                 </tr>
               </thead>
               <tbody>
-                <?php if($users_sort_date_created):?>
+                <?php if ($users_sort_date_created): ?>
 
-                <?php foreach ($users_sort_date_created as $user) : 
-                  if($user['IS_ACTIVATED'] == 1): 
-                ?>
-                  <tr>
-                    <td><?php echo $user['USER_ID'] ?></td>
-                    <td><?php echo $user['USERNAME'] ?></td>
-                    <td><?php echo $user['FULL_NAME'] ?></td>
-                    <td><?php echo $user['EMAIL'] ?></td>
-                    <td><?php echo $user['DATE_CREATED'] ?></td>
-                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
-                  </tr>
-                <?php endif; ?>
-                
-                <?php endforeach; ?>
-                <?php endif; ?>
+                <?php foreach ($users_sort_date_created as $user):
+    if ($user['ACTIVATED_STATE'] === "đã vô hiệu hóa"):
+    ?>
+		                  <tr>
+		                    <td><?php echo $user['USER_ID'] ?></td>
+		                    <td><?php echo $user['USERNAME'] ?></td>
+		                    <td><?php echo $user['FULL_NAME'] ?></td>
+		                    <td><?php echo $user['EMAIL'] ?></td>
+		                    <td><?php echo $user['DATE_CREATED'] ?></td>
+		                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
+		                  </tr>
+		                <?php endif;?>
+
+                <?php endforeach;?>
+                <?php endif;?>
 
               </tbody>
             </table>
           </div>
     </div>
-    
-	
+
+
 </body>
 </html>

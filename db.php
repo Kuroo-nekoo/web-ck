@@ -44,7 +44,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
     $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_CREATED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
-    $activated_state = "chờ kích hoạt";
+    $activated_state = "chờ xác minh";
     $fail_login_count = 0;
     $abnormal_login_count = 0;
     $is_locked = 1;
