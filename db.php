@@ -227,29 +227,4 @@ function date_sort($a, $b)
     return strtotime($a) - strtotime($b);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-function get_users_data_sortdate()
-{
-    $conn = connect_database();
-    $sql = "SELECT * FROM ACCOUNT";
-    $result = $conn->query($sql);
-    $data = array();
-    usort($result['DATE_CREATED'], 'date_sort');
-    while (($row = $result->fetch_assoc())) {
-        $data[] = $row;
-=======
-=======
->>>>>>> main
-function get_users_data_sort_date() {
-    $data = get_users_data();
-    if ($data['code'] === 0) {
-        usort($data['data'], 'date_sort');
-        return array('code' => 0, 'data' => $data['data']); 
-<<<<<<< HEAD
->>>>>>> 1944f0f (error register)
-=======
->>>>>>> main
-    }
-    return array('code' => 1, 'error' => 'Empty data');
-}
+
