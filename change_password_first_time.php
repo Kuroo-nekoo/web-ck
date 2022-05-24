@@ -10,13 +10,13 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
     && $_POST['new_password'] !== '' && $_POST['confirm_new_password'] !== ''
     && isset($user_id)) {
     $new_password = $_POST['new_password'];
-    $_SESSION['is_new_user'] = 0;
+    unset($_SESSION['is_new_user']);
     if (strlen($new_password) < 6) {
         $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
     } else {
         $data = change_password_first_time($new_password, $user_id);
         if ($data['code'] === 0) {
-            header('Location: login.php');
+            header('Location: user.php');
         } else if ($data['code'] === 1) {
             $error_message = $data['error'];
         }
