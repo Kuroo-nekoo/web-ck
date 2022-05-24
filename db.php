@@ -109,9 +109,15 @@ function login($username, $password)
             }
         }
         return array('code' => 1, 'error' => 'Sai mật khẩu');
+    } else {
+        $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = 0, ABNORMAL_LOGIN_COUNT = 0 WHERE USERNAME = ?";
+        $stm = $conn->prepare($sql);
+        $stm->bind_param('s', $username);
+        if (!$stm->execute()) {
+            return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+        }
+        return array('code' => 0, 'data' => $data);
     }
-
-    return array('code' => 0, 'data' => $data);
 }
 
 function change_password_first_time($new_password, $user_id)
