@@ -172,6 +172,8 @@ function change_password($old_password, $new_password, $user_id)
 
         $stm->execute();
         return array('code' => 0);
+    } else {
+        return array('code' => 1, 'error' => 'Sai mật khẩu cũ');
     }
 }
 
@@ -197,7 +199,7 @@ function check_email_phone_number($email_phone_number)
 
     $result = $stm->get_result();
     if ($result->num_rows === 0) {
-        return array('code' => 1, 'error' => 'Account not found');
+        return array('code' => 1, 'error' => 'Tài khoản không tồn tại');
     }
 
     return array('code' => 0);
