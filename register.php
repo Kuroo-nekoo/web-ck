@@ -18,9 +18,9 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     $address = $_POST['address'];
 
     $data = register($phone_number, $email, $full_name, $date_of_birth, $address);
-    if ($data['code'] === 0) {
+    if ($data['code'] === 0 && $data['username'] !== null && $data['password'] !== null) {
         $subject = "Thông tin tài khoản và mật khẩu";
-        $body = "Tài khoản: " . $data['username'] . "<br/>" . "Mật khẩu: " . $username_password['password'];
+        $body = "Tài khoản: " . $data['username'] . "<br/>" . "Mật khẩu: " . $data['password'];
         $email_address = $email;
         send_email($subject, $body, $email_address);
     } else if ($data['code'] === 1) {
@@ -63,8 +63,12 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
   <body>
     <?php include_once './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-md-4" method="POST" action="register.php">
-      <div><?php echo $error_message ?></div>
+      <form class="col-md-4 border" method="POST" action="register.php">
+      <div class="text-danger h5">
+        <?php if (isset($error_message) && !empty($error_message)) {
+    echo $error_message;
+}
+?></div>
         <h1>Đăng ký tài khoản</h1>
         <div class="form-group">
           <label for="phone_number">Số điện thoại: </label>

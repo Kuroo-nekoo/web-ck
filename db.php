@@ -43,8 +43,8 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
 
     $sql = "INSERT INTO TAIKHOAN (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, IS_VALIDATED, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
-    $is_new_user = 0;
-    $is_validated = 1;
+    $is_new_user = 1;
+    $is_validated = 0;
     $fail_login_count = 0;
     $abnormal_login_count = 0;
     $is_locked = 1;
@@ -69,7 +69,7 @@ function login($username, $password)
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
     if ($result->num_rows === 0) {
-        return array('code' => 1, 'error' => 'Account does not exist');
+        return array('code' => 1, 'error' => 'Sai tên đăng nhập');
     } else if (isset($data['PASSWORD']) && $data['PASSWORD'] != $password) {
         if ($data['FAIL_LOGIN_COUNT'] === null) {
             $fail_login_count = 1;
@@ -109,7 +109,7 @@ function login($username, $password)
                 $stm->execute();
             }
         }
-        return array('code' => 1, 'error' => 'Wrong password');
+        return array('code' => 1, 'error' => 'Sai mật khẩu');
     }
 
     return array('code' => 0, 'data' => $data);
@@ -118,7 +118,7 @@ function login($username, $password)
 function change_password_first_time($new_password, $user_id)
 {
     $conn = connect_database();
-    $sql = "UPDATE TAIKHOAN SET PASSWORD = ?, IS_NEW_USER = 1 WHERE USER_ID = ?";
+    $sql = "UPDATE TAIKHOAN SET PASSWORD = ?, IS_NEW_USER = 0 WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('ss', $new_password, $user_id);
 

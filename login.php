@@ -11,12 +11,16 @@ if (isset($_SESSION['is_new_user'])) {
 if (isset($_POST['username']) && $_POST['password']) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    if (strlen($username) !== 10) {
+        $error_message = "Vui lòng nhập đúng định dạng của tên đăng nhập";
+    } else if (strlen($password) <= 6) {
+        $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
+    }
 
-    $user_data = login($username, $password);
-    print_r($user_data);
-    if (isset($user_data['IS_LOCKED']) && $user_data['IS_LOCKED'] === 0) {
+    $data = login($username, $password);
+    if (isset($data['IS_LOCKED']) && $user_data['IS_LOCKED'] === 0) {
         echo "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
-    } else if ($user_data['code'] === 0) {
+    } else if ($data['code'] === 0) {
         $is_new_user = $user_data['data']['IS_NEW_USER'];
         unset($_SESSION['user_id']);
         unset($_SESSION['is_new_user']);
@@ -25,8 +29,8 @@ if (isset($_POST['username']) && $_POST['password']) {
         if ($is_new_user === 0) {
             header('Location: change_password_first_time.php');
         }
-    } else if ($user_data['code'] === 1) {
-        echo $user_data['error'];
+    } else if ($data['code'] === 1) {
+        $error_message = $data['error'];
     }
 }
 
@@ -64,8 +68,15 @@ if (isset($_POST['username']) && $_POST['password']) {
   <body>
     <?php include './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-4" action="login.php" method="POST">
+      <form class="col-4 border" action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>
+        <div class="text-danger h-6">
+          <?php
+if (isset($error_message) && strlen($error_message) !== 0) {
+    echo $error_message;
+}
+?>
+        </div>
         <div class="form-group">
           <label for="username">Tên đăng nhập: </label>
           <input

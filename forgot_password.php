@@ -52,7 +52,7 @@ if (isset($_POST['otp']) && $_POST['otp'] === $otp) {
   <body>
     <?php include './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-4" action="forgot_password.php" method="POST">
+      <form class="col-4 border" action="forgot_password.php" method="POST">
         <h1>Quên mật khẩu:</h1>
         <div class="form-group">
           <label for="otp">Số điện thoại/ email:</label>

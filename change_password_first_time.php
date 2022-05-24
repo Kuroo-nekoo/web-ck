@@ -10,7 +10,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
     && $_POST['new_password'] !== '' && $_POST['confirm_new_password'] !== ''
     && isset($user_id)) {
     $new_password = $_POST['new_password'];
-    $_SESSION['is_new_user'] = 1;
+    $_SESSION['is_new_user'] = 0;
     change_password_first_time($new_password, $user_id);
     if (change_password_first_time($new_password, $user_id)) {
         header('Location: login.php');
