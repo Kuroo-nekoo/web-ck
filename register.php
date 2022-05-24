@@ -60,7 +60,8 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./register.css" />
+    <link rel="stylesheet" href="./main.css" />
+    <script src="./script.js"></script>
   </head>
   <body>
     <?php include_once './navbar.php'?>
@@ -117,7 +118,9 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
             accept="image/*"
             name="frontsideimg"
             id="frontsideimg"
+            onchange="readURL(this, '#front');"
           />
+          <img id="front" />
         </div>
         <div class="form-group">
           <label for="backsideimg">Ảnh mặt sau CMND: </label>
@@ -126,7 +129,9 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
             accept="image/*"
             name="backsideimg"
             id="backsideimg"
+            onchange="readURL(this, '#back');"
           />
+          <img id="back"/>
         </div>
         <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
       </form>
