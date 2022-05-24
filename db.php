@@ -219,6 +219,18 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
-function date_sort($a, $b) {
-    return  strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
+function date_sort($a, $b)
+{
+    return strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
+}
+
+function get_users_data_sort_date()
+{
+    $data = get_users_data();
+    if ($data['code'] == 0) {
+        $result = $data['data'];
+        usort($result, "date_sort");
+        return array('code' => 0, 'data' => $result);
+    }
+    return array('code' => 1, 'error' => 'Empty data');
 }
