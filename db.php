@@ -219,7 +219,6 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
-function date_sort($a, $b)
-{
-    return strtotime($a) - strtotime($b);
+function date_sort($a, $b) {
+    return  strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
 }
