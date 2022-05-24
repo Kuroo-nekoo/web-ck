@@ -54,7 +54,7 @@ if (isset($_SESSION['user_id'])) {
 			</div>
 			<div class="form-group form-row">
 				<label class="col-md-3" for="is_active">Trạng thái:</label>
-				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['IS_ACTIVATED'] === 1 ? "đã kích hoạt" : "chưa kích hoạt"; ?>" />
+				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" />
 			</div>
 		</form>
 		<a href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
