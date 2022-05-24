@@ -1,5 +1,6 @@
 <?php
 require_once './db.php';
+
 session_start();
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -14,7 +15,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password']) && is
     } else {
         $data = change_password($old_password, $new_password, $user_id);
         if ($data['code'] === 0) {
-            header('Location: login.php');
+            header('Location: user.php');
         } else if ($data['code'] === 1) {
             $error_message = $data['error'];
         }
