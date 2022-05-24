@@ -26,8 +26,7 @@ else $users_sort_date_created = [];
 </head>
 
 <body>
-    <?php echo json_encode($users_sort_date_created)?>
-    <?php echo json_encode($users)?>
+
     <?php include './navbar.php'?>
     <div class="container">
           <h3 class="">Danh sách tài khoản chưa xác thực</h3>
@@ -47,7 +46,7 @@ else $users_sort_date_created = [];
               <tbody>
                 <?php if($users):?>
                 <?php foreach ($users as $user) : 
-                  if($user['IS_ACTIVATED'] == 1):
+                  if($user['IS_ACTIVATED'] == 0):
                 ?>
                   <tr>
                     <td><?php echo $user['USER_ID'] ?></td>
@@ -88,9 +87,46 @@ else $users_sort_date_created = [];
                     <td><?php echo $user['USER_ID'] ?></td>
                     <td><?php echo $user['USERNAME'] ?></td>
                     <td><?php echo $user['FULL_NAME'] ?></td>
-                    <td><?php echo $user['DATE_CREATED'] ?></td>
                     <td><?php echo $user['EMAIL'] ?></td>
-                    <td class='bg-warning'><?php echo 'Đã xác thực' ?></td>
+                    <td><?php echo $user['DATE_CREATED'] ?></td>
+                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
+                  </tr>
+                <?php endif; ?>
+                
+                <?php endforeach; ?>
+                <?php endif; ?>
+
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-3">Danh sách tài khoản bị vô hiệu hóa</h3>
+
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered table-striped mb-0 ">
+              <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Mã só tài khoản</th>
+                    <th>Tên tài khoản</th>
+                    <th>Email</th>
+                    <th>Ngày tạo</th>
+                    <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php if($users_sort_date_created):?>
+
+                <?php foreach ($users_sort_date_created as $user) : 
+                  if($user['IS_ACTIVATED'] == 1): 
+                ?>
+                  <tr>
+                    <td><?php echo $user['USER_ID'] ?></td>
+                    <td><?php echo $user['USERNAME'] ?></td>
+                    <td><?php echo $user['FULL_NAME'] ?></td>
+                    <td><?php echo $user['EMAIL'] ?></td>
+                    <td><?php echo $user['DATE_CREATED'] ?></td>
+                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
                   </tr>
                 <?php endif; ?>
                 

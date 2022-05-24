@@ -20,11 +20,11 @@ function send_email($subject, $body, $email_address)
         $mail->isSMTP(); //Send using SMTP
         $mail->Host = 'smtp.gmail.com'; //Set the SMTP server to send through
         $mail->SMTPAuth = true; //Enable SMTP authentication
-        $mail->Username = 'lygiabaokg2002@gmail.com'; //SMTP username
+        $mail->Username = 'phamtrihung0611@gmail.com'; //SMTP username
         $mail->Password = 'oydrvkuqpoellatl'; //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
         $mail->Port = 465; //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-        $mail->setFrom('phamtrihung0611@gmail.com', 'Mailer');
+        $mail->setFrom('lygiabaokg2002@gmail.com', 'Mailer');
         $mail->addAddress($email_address); //Name is optional
 
         //Content
