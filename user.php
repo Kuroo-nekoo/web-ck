@@ -14,6 +14,7 @@ if (isset($_SESSION['user_id'])) {
     $user_data = get_user_data($user_id)['data'];
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

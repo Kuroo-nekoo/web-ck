@@ -5,24 +5,11 @@ require_once './common.php';
 session_start();
 if ($_SESSION['user_id']) {
     $user_id = $_SESSION['user_id'];
-    $data = get_user_data($user_id);
-    if (isset($data['is_locked']) && $data['is_locked'] === 0) {
-        $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
-        $is_locked = 1;
-    }
 }
+
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
-}
-
-if (isset($_SESSION['temp_lock_time'])) {
-    if ((time() - $_SESSION['temp_lock_time'] < 60)) {
-        $is_temp_locked = 1;
-        $error_message = 'Tài khoản đã bị khóa tạm thời';
-    } else {
-        unset($_SESSION['temp_lock_time']);
-    }
 }
 
 if (isset($_POST['username']) && $_POST['password']) {
@@ -36,7 +23,10 @@ if (isset($_POST['username']) && $_POST['password']) {
     } else {
         $data = login($username, $password);
 
-        if ($data['code'] === 0) {
+        if (isset($data['is_locked']) && $data['is_locked'] === 1) {
+            $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
+            $is_locked = 1;
+        } else if ($data['code'] === 0) {
             $is_new_user = $data['data']['IS_NEW_USER'];
             unset($_SESSION['user_id']);
             unset($_SESSION['is_new_user']);
@@ -50,6 +40,15 @@ if (isset($_POST['username']) && $_POST['password']) {
                 $_SESSION['temp_lock_time'] = time();
             }
         }
+    }
+}
+
+if (isset($_SESSION['temp_lock_time'])) {
+    if ((time() - $_SESSION['temp_lock_time'] < 60)) {
+        $is_temp_locked = 1;
+        $error_message = 'Tài khoản đã bị khóa tạm thời';
+    } else {
+        unset($_SESSION['temp_lock_time']);
     }
 }
 

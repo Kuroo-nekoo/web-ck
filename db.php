@@ -47,7 +47,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
     $activated_state = "chờ xác minh";
     $fail_login_count = 0;
     $abnormal_login_count = 0;
-    $is_locked = 1;
+    $is_locked = 0;
     $date_created = date("Y-m-d");
     $stm->bind_param('sssssssisiiis', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_created);if (!$stm->execute()) {return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);}
 
@@ -66,7 +66,9 @@ function login($username, $password)
 
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
-    if ($result->num_rows === 0) {
+    if ($data['IS_LOCKED'] === 1) {
+        return array('code' => 1, 'error' => 'Tài khoản đã bị khóa', 'is_locked' => 1);
+    } else if ($result->num_rows === 0) {
         return array('code' => 1, 'error' => 'Sai tên đăng nhập');
     } else if (isset($data['PASSWORD']) && $data['PASSWORD'] != $password) {
         if ($data['FAIL_LOGIN_COUNT'] === null) {
@@ -85,6 +87,7 @@ function login($username, $password)
             if ($data['ABNORMAL_LOGIN_COUNT'] === 0) {
                 $abnormal_login_count = 1;
                 $fail_login_count = 0;
+
                 $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iis', $fail_login_count, $abnormal_login_count, $username);
@@ -95,9 +98,10 @@ function login($username, $password)
 
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa tạm thời', 'abnormal_login_count' => $abnormal_login_count);
             } else if ($data['ABNORMAL_LOGIN_COUNT'] === 1) {
-                $is_locked = 0;
+                $is_locked = 1;
                 $fail_login_count = 0;
                 $abnormal_login_count = 0;
+
                 $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, IS_LOCKED = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iiis', $fail_login_count, $abnormal_login_count, $is_locked, $username);
@@ -105,6 +109,7 @@ function login($username, $password)
                 if (!$stm->execute()) {
                     return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
                 }
+
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa vĩnh viễn', 'is_locked' => $is_locked);
             }
         }
