@@ -16,10 +16,12 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     $full_name = $_POST['full_name'];
     $date_of_birth = $_POST['date_of_birth'];
     $address = $_POST['address'];
+    echo $date_of_birth;
+    echo date('Y-m-d');
 
     $data = register($phone_number, $email, $full_name, $date_of_birth, $address);
     if ($data['code'] === 0 && $data['username'] !== null && $data['password'] !== null) {
-        $subject = "Thông tin tài khoản và mật khẩu";
+        $subject = "Username and Password: ";
         $body = "Tài khoản: " . $data['username'] . "<br/>" . "Mật khẩu: " . $data['password'];
         $email_address = $email;
         send_email($subject, $body, $email_address);
