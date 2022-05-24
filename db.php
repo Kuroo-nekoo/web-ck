@@ -41,14 +41,15 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
         $password = $password . chr(rand(0, 25) + 97);
     }
 
-    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, IS_VALIDATED, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, IS_VALIDATED, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_CREATED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
     $is_validated = 0;
     $fail_login_count = 0;
     $abnormal_login_count = 0;
     $is_locked = 1;
-    $stm->bind_param('sssssssiiiii', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $is_validated, $fail_login_count, $abnormal_login_count, $is_locked);
+    $date_created = date("Y-m-d");
+    $stm->bind_param('sssssssiiiiis', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $is_validated, $fail_login_count, $abnormal_login_count, $is_locked, $date_created);
     if (!$stm->execute()) {
         return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
     }
@@ -214,6 +215,9 @@ function get_users_data()
     while(( $row = $result->fetch_assoc())){
         $data[] = $row;
     }
+    if ($result->num_rows === 0) {
+        return array('code' => 1, 'error' => 'Empty data');
+    }
     return array('code' => 0, 'data' => $data);
 }
 
@@ -221,14 +225,11 @@ function date_sort($a, $b) {
     return strtotime($a) - strtotime($b);
 }
 
-function get_users_data_sortdate() {
-    $conn = connect_database();
-    $sql = "SELECT * FROM ACCOUNT";
-    $result = $conn -> query($sql);
-    $data = array();
-    usort($result['DATE_CREATED'], 'date_sort');
-    while(( $row = $result->fetch_assoc())){
-        $data[] = $row;
+function get_users_data_sort_date() {
+    $data = get_users_data();
+    if ($data['code'] === 0) {
+        usort($data['data'], 'date_sort');
+        return array('code' => 0, 'data' => $data['data']); 
     }
-    return array('code' => 0, 'data' => $data);
+    return array('code' => 1, 'error' => 'Empty data');
 }
