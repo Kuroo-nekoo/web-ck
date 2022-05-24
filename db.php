@@ -202,3 +202,18 @@ function check_email_phone_number($email_phone_number)
 
     return array('code' => 0);
 }
+
+function get_users_data()
+{
+    $conn = connect_database();
+    $sql = "SELECT * FROM ACCOUNT";
+    $stm = $conn->prepare($sql);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    return array('code' => 0, 'data' => $data);
+}
