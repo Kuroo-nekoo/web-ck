@@ -18,7 +18,7 @@ function connect_database()
 function register($phone_number, $email, $full_name, $date_of_birth, $address)
 {
     $conn = connect_database();
-    $sql = "SELECT * FROM TAIKHOAN WHERE EMAIL = ? OR PHONE_NUMBER = ?";
+    $sql = "SELECT * FROM ACCOUNT WHERE EMAIL = ? OR PHONE_NUMBER = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('ss', $email, $phone_number);
     $username = '';
@@ -41,7 +41,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
         $password = $password . chr(rand(0, 25) + 97);
     }
 
-    $sql = "INSERT INTO TAIKHOAN (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, IS_VALIDATED, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, IS_VALIDATED, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
     $is_validated = 0;
@@ -59,7 +59,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
 function login($username, $password)
 {
     $conn = connect_database();
-    $sql = "SELECT * FROM TAIKHOAN WHERE USERNAME = ?";
+    $sql = "SELECT * FROM ACCOUNT WHERE USERNAME = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('s', $username);
     if (!$stm->execute()) {
@@ -76,7 +76,7 @@ function login($username, $password)
         } else {
             $fail_login_count = $data['FAIL_LOGIN_COUNT'] + 1;
         }
-        $sql = "UPDATE TAIKHOAN SET FAIL_LOGIN_COUNT = ? WHERE USERNAME = ?";
+        $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ? WHERE USERNAME = ?";
         $stm = $conn->prepare($sql);
         $stm->bind_param('is', $fail_login_count, $username);
         if (!$stm->execute()) {
@@ -87,7 +87,7 @@ function login($username, $password)
             if ($data['ABNORMAL_LOGIN_COUNT'] === 0) {
                 $abnormal_login_count = 1;
                 $fail_login_count = 0;
-                $sql = "UPDATE TAIKHOAN SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ? WHERE USERNAME = ?";
+                $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iis', $fail_login_count, $abnormal_login_count, $username);
 
@@ -99,7 +99,7 @@ function login($username, $password)
                 $is_locked = 0;
                 $fail_login_count = 0;
                 $abnormal_login_count = 0;
-                $sql = "UPDATE TAIKHOAN SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, IS_LOCKED = ? WHERE USERNAME = ?";
+                $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, IS_LOCKED = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iiis', $fail_login_count, $abnormal_login_count, $is_locked, $username);
 
@@ -118,7 +118,7 @@ function login($username, $password)
 function change_password_first_time($new_password, $user_id)
 {
     $conn = connect_database();
-    $sql = "UPDATE TAIKHOAN SET PASSWORD = ?, IS_NEW_USER = 0 WHERE USER_ID = ?";
+    $sql = "UPDATE ACCOUNT SET PASSWORD = ?, IS_NEW_USER = 0 WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('ss', $new_password, $user_id);
 
@@ -133,7 +133,7 @@ function change_password_first_time($new_password, $user_id)
 function get_user_data($user_id)
 {
     $conn = connect_database();
-    $sql = "SELECT * FROM TAIKHOAN WHERE USER_ID = ?";
+    $sql = "SELECT * FROM ACCOUNT WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('s', $user_id);
 
@@ -149,7 +149,7 @@ function get_user_data($user_id)
 function change_password($old_password, $new_password, $user_id)
 {
     $conn = connect_database();
-    $sql = "SELECT * FROM TAIKHOAN WHERE USER_ID = ?";
+    $sql = "SELECT * FROM ACCOUNT WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('s', $user_id);
     if (!$stm->execute()) {
@@ -163,7 +163,7 @@ function change_password($old_password, $new_password, $user_id)
     }
 
     if ($old_password === $data['PASSWORD']) {
-        $sql = "UPDATE TAIKHOAN SET PASSWORD = ? WHERE USER_ID = ?";
+        $sql = "UPDATE ACCOUNT SET PASSWORD = ? WHERE USER_ID = ?";
         $stm = $conn->prepare($sql);
         $stm->bind_param('ss', $new_password, $user_id);
         if (!$stm->execute()) {
@@ -188,7 +188,7 @@ function gen_otp()
 function check_email_phone_number($email_phone_number)
 {
     $conn = connect_database();
-    $sql = "SELECT * FROM TAIKHOAN WHERE EMAIL = ? OR PHONE_NUMBER = ?";
+    $sql = "SELECT * FROM ACCOUNT WHERE EMAIL = ? OR PHONE_NUMBER = ?";
     $stm = $conn->prepare($sql);
     $stm->bind_param('ss', $email_phone_number, $email_phone_number);
     if (!$stm->execute()) {
