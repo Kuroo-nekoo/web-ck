@@ -14,29 +14,22 @@ if (isset($_POST['email_phone_number']) && $_POST['email_phone_number'] !== '') 
 
     $data = check_email_phone_number($email_phone_number);
     if ($data['code'] === 0) {
-        if (isset($_SESSION['started']) && time() - $_SESSION['started'] < 60 && isset($_POST['otp'])) {
+        if (isset($_SESSION['started']) && (time() - $_SESSION['otp']['started'] < 60)) {
             $otp = $_SESSION['otp'];
         } else {
             $otp = gen_otp();
-            $_SESSION['started'] = time();
-            $_SESSION['otp'] = $otp;
+            $_SESSION['otp'] = array('otp' => $otp, 'started' => time());
             $subject = "OTP";
             $body = "Mã OTP của bạn là: $otp";
             send_email($subject, $body, $email_phone_number);
         }
 
-        if (isset($_SESSION['otp'])) {
-            $_SESSION['started'] = time();
-        }
-        // header('Location: reset_password.php');
+        header('Location: reset_password.php');
     } else if ($data['code'] === 1) {
         $error_message = $data['error'];
     }
 }
 
-if (isset($_POST['otp']) && $_POST['otp'] === $otp) {
-    header('Location: change_password_first_time.php');
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">

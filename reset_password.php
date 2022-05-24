@@ -2,15 +2,26 @@
 require_once './db.php';
 require_once './common.php';
 session_start();
+print_r($_SESSION);
 
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
 }
 
+if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] < 60)) {
+    echo time() - $_SESSION['otp']['started'];
+    if (isset($_POST['otp'])) {
 
-if (isset($_POST['otp']) && $_POST['otp'] === $otp) {
-    header('Location: change_password_first_time.php');
+        $otp = $_SESSION['otp']['otp'];
+      echo $otp;
+      echo $_POST['otp'];
+        if ($_POST['otp'] === $otp) {
+            header('Location: change_password_first_time.php');
+        }
+    }
+} else {
+    header('Location: forgot_password.php');
 }
 ?>
 <!DOCTYPE html>

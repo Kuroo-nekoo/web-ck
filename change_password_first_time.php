@@ -61,7 +61,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
         <h1 class="text-center ">Change password</h1>
         <div class="text-danger">
           <?php
-echo $error_message;
+echo isset($error_message) ? $error_message : '';
 ?>
         </div>
         <div class="form-group">
