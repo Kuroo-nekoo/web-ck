@@ -3,9 +3,26 @@ require_once './db.php';
 require_once './common.php';
 
 session_start();
+if ($_SESSION['user_id']) {
+    $user_id = $_SESSION['user_id'];
+    $data = get_user_data($user_id);
+    if (isset($data['is_locked']) && $data['is_locked'] === 0) {
+        $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
+        $is_locked = 1;
+    }
+}
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
+}
+
+if (isset($_SESSION['temp_lock_time'])) {
+    if ((time() - $_SESSION['temp_lock_time'] < 60)) {
+        $is_temp_locked = 1;
+        $error_message = 'Tài khoản đã bị khóa tạm thời';
+    } else {
+        unset($_SESSION['temp_lock_time']);
+    }
 }
 
 if (isset($_POST['username']) && $_POST['password']) {
@@ -18,28 +35,19 @@ if (isset($_POST['username']) && $_POST['password']) {
         $error_message = "Vui lòng nhập mật khẩu có độ dài ít nhất 6 ký tự";
     } else {
         $data = login($username, $password);
-        if (isset($data['is_locked']) && $data['is_locked'] === 0) {
-            $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
-            $is_locked = 1;
-        } else if ($data['code'] === 0) {
+
+        if ($data['code'] === 0) {
             $is_new_user = $data['data']['IS_NEW_USER'];
             unset($_SESSION['user_id']);
             unset($_SESSION['is_new_user']);
             $_SESSION['user_id'] = $data['data']['USER_ID'];
             $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
-            if ($is_new_user === 0) {
+            if ($is_new_user === 1) {
                 header('Location: change_password_first_time.php');
             }
         } else if ($data['code'] === 1) {
             if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
-                if (isset($_SESSION['temp_lock_time']) && (time() - $_SESSION['temp_lock_time'] < 60)) {
-                    $is_temp_locked = 1;
-                    $error_message = 'Tài khoản đã bị khóa tạm thời';
-                } else {
-                    $is_temp_locked = 1;
-                    $_SESSION['temp_lock_time'] = time();
-                    $error_message = 'Tài khoản đã bị khóa tạm thời';
-                }
+                $_SESSION['temp_lock_time'] = time();
             }
         }
     }
