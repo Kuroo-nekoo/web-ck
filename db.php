@@ -209,13 +209,26 @@ function get_users_data()
 {
     $conn = connect_database();
     $sql = "SELECT * FROM ACCOUNT";
-    $stm = $conn->prepare($sql);
-
-    if (!$stm->execute()) {
-        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    $result = $conn -> query($sql);
+    $data = array();
+    while(( $row = $result->fetch_assoc())){
+        $data[] = $row;
     }
+    return array('code' => 0, 'data' => $data);
+}
 
-    $result = $stm->get_result();
-    $data = $result->fetch_assoc();
+function date_sort($a, $b) {
+    return strtotime($a) - strtotime($b);
+}
+
+function get_users_data_sortdate() {
+    $conn = connect_database();
+    $sql = "SELECT * FROM ACCOUNT";
+    $result = $conn -> query($sql);
+    $data = array();
+    usort($result['DATE_CREATED'], 'date_sort');
+    while(( $row = $result->fetch_assoc())){
+        $data[] = $row;
+    }
     return array('code' => 0, 'data' => $data);
 }
