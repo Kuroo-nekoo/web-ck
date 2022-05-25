@@ -18,9 +18,6 @@ echo '<nav class="mb-3 navbar navbar-expand-lg navbar-light bg-light">
           <li>
             <a class="nav-link" href="/history.php">Lịch sử chuyển tiền</a>
           </li>
-          <li>
-            <a class="nav-link" href="/buyphonecard.php">Mua thẻ điện thoại</a>
-          </li>
         </ul>
       </div>
     </nav>';

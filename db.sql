@@ -64,7 +64,8 @@ CREATE TABLE `history` (
 ALTER TABLE `account`
   ADD KEY `USER_ID` (`USER_ID`);
 
-
+ALTER TABLE `history`
+  ADD KEY `ID` (`ID`);
 --
 ALTER TABLE `account`
   MODIFY `USER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
