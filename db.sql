@@ -56,6 +56,10 @@ CREATE TABLE `account` (
 -- Dumping data for table `account`
 --
 
+-- test user
+INSERT INTO `account` (`USER_ID`, `PHONE_NUMBER`, `EMAIL`, `FULL_NAME`, `DATE_OF_BIRTH`, `ADDRESS`, `USERNAME`, `PASSWORD`, `IS_NEW_USER`, `ACTIVATED_STATE`, `FAIL_LOGIN_COUNT`, `ABNORMAL_LOGIN_COUNT`, `IS_LOCKED`, `DATE_LOCKED`, `DATE_CREATED`, `BALANCE`) VALUES
+(1, '0907718480', 'bao@gmail.com', 'Lý Gia Bảo', '2022-05-02', 'Tp. Rạch Giá', '5472576450', '123456', b'0', 'chờ xác minh', 0, 0, b'0', NULL, '2025-05-22 01:26:35', 0),
+(2, '25156456', 'phihung@gmail.com', 'Phi Hùng', '2022-05-11', 'TP HCM', '9766924239', 'ormowc', b'1', 'chờ xác minh', 0, 0, b'0', NULL, '2022-05-25 13:43:56', 0);
 
 --
 -- Indexes for dumped tables
@@ -65,7 +69,7 @@ CREATE TABLE `account` (
 -- Indexes for table `account`
 --
 ALTER TABLE `account`
-  ADD KEY `USER_ID` (`USER_ID`);
+  ADD PRIMARY KEY (`USER_ID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -75,7 +79,7 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `USER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `USER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
