@@ -49,7 +49,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
     $abnormal_login_count = 0;
     $is_locked = 0;
     date_default_timezone_set('asia/ho_chi_minh'); //set timezone
-    $date_created = date('d-m-y h:i:s'); // get current date
+    $date_created = date('y-m-d G:i:s'); // get current date
     $date_locked = null;
     $balance = 0;
     $stm->bind_param('sssssssisiiissi', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $balance);
@@ -92,7 +92,7 @@ function login($username, $password)
                 $abnormal_login_count = 1;
                 $fail_login_count = 0;
                 date_default_timezone_set('asia/ho_chi_minh'); // set timezone
-                $date_locked = date('d-m-y h:i:s'); // get current date
+                $date_locked = date('y-m-d G:i:s'); // get current date
                 $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, DATE_LOCKED = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iiss', $fail_login_count, $abnormal_login_count, $date_locked, $username);
