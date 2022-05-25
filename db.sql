@@ -42,18 +42,19 @@ CREATE TABLE `account` (
   `ADDRESS` varchar(50) NOT NULL,
   `USERNAME` varchar(10) DEFAULT NULL,
   `PASSWORD` varchar(10) DEFAULT NULL,
-  `IS_NEW_USER` bit(1) DEFAULT b'0',
-  `ACTIVATED_STATE` varchar(50),
+  `IS_NEW_USER` bit(1) DEFAULT b'1',
+  `ACTIVATED_STATE` varchar(50) DEFAULT NULL,
   `FAIL_LOGIN_COUNT` int(11) DEFAULT 0,
   `ABNORMAL_LOGIN_COUNT` int(11) DEFAULT 0,
-  `IS_LOCKED` bit(1) DEFAULT b'1',
-  `DATE_CREATED` date NOT NULL
+  `IS_LOCKED` bit(1) DEFAULT b'0',
+  `DATE_LOCKED` datetime DEFAULT NULL,
+  `DATE_CREATED` datetime NOT NULL,
+  `BALANCE` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `account`
 --
-
 
 
 --
