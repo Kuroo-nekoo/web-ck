@@ -40,7 +40,6 @@ CREATE TABLE `account` (
   `FULL_NAME` varchar(50) NOT NULL,
   `DATE_OF_BIRTH` date NOT NULL, 
   `ADDRESS` varchar(50) NOT NULL,
-  `BALANCE` double DEFAULT 0,
   `USERNAME` varchar(10) DEFAULT NULL,
   `PASSWORD` varchar(10) DEFAULT NULL,
   `IS_NEW_USER` bit(1) DEFAULT b'0',
@@ -48,12 +47,14 @@ CREATE TABLE `account` (
   `FAIL_LOGIN_COUNT` int(11) DEFAULT 0,
   `ABNORMAL_LOGIN_COUNT` int(11) DEFAULT 0,
   `IS_LOCKED` bit(1) DEFAULT b'1',
-  `DATE_CREATED` date NOT NULL
+  `DATE_CREATED` date NOT NULL,
+  `BALANCE` double DEFAULT 0,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `history` (
         `ID` int(11) not null,
-        `RECEIVER_USER` varchar(10),
+        `USER_ID` int(11) not null,
+        `RECEIVER_USER_ID` int(11),
         `RECEIVER_PHONE` varchar(20),
         `AMOUNT`  float ,
         `TIME` varchar(20) NOT NULL
