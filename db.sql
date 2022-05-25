@@ -35,11 +35,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `account` (
   `USER_ID` int(11) NOT NULL,
-  `PHONE_NUMBER` varchar(20) NOT NULL,
+  `PHONE_NUMBER` varchar(20) NOT NULL UNIQUE,
   `EMAIL` varchar(50) NOT NULL,
   `FULL_NAME` varchar(50) NOT NULL,
-  `DATE_OF_BIRTH` date NOT NULL,
+  `DATE_OF_BIRTH` date NOT NULL, 
   `ADDRESS` varchar(50) NOT NULL,
+  `BALANCE` double DEFAULT 0,
   `USERNAME` varchar(10) DEFAULT NULL,
   `PASSWORD` varchar(10) DEFAULT NULL,
   `IS_NEW_USER` bit(1) DEFAULT b'0',
@@ -50,33 +51,28 @@ CREATE TABLE `account` (
   `DATE_CREATED` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `account`
+CREATE TABLE `history` (
+        `ID` int(11) not null,
+        `RECEIVER_USER` varchar(10),
+        `RECEIVER_PHONE` varchar(20),
+        `AMOUNT`  float ,
+        `TIME` varchar(20) NOT NULL
+      )
 --
 
-
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `account`
 --
 ALTER TABLE `account`
   ADD KEY `USER_ID` (`USER_ID`);
 
---
--- AUTO_INCREMENT for dumped tables
---
 
---
--- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
   MODIFY `USER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
+ALTER TABLE `history`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -3,6 +3,7 @@ require_once './db.php';
 require_once './common.php';
 
 session_start();
+print_r($_SESSION);
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
