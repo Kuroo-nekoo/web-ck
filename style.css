@@ -1,0 +1,19 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.img_show {
+  width: 350px;
+  height: 200px;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+

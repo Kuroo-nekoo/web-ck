@@ -52,7 +52,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./register.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body style="height: 100vh;" >
   <?php require_once './navbar.php'?>
