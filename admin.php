@@ -1,6 +1,12 @@
 <?php
 require_once './common.php';
 require_once './db.php';
+
+session_start();
+if (!isset($_SESSION['is_admin']))  
+  header('Location: ./login.php');
+
+
 if (get_users_data()['code'] == 0) {
     $users = get_users_data()['data'];
 } else {

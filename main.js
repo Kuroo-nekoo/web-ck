@@ -18,5 +18,5 @@ function getUserInfo(user_id) {
 
 
 function verification(user_id) {
- 
+  $('.modal-title').html(user_id);
 }

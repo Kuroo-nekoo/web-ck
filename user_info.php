@@ -2,6 +2,9 @@
 require_once './common.php';
 require_once './db.php';
 
+session_start();
+if (!isset($_SESSION['is_admin']))  
+  header('Location: ./login.php');
 
 $user_data = get_user_data($_GET['user_id'])['data'];
 
@@ -69,13 +72,13 @@ $user_data = get_user_data($_GET['user_id'])['data'];
                 <?php if($user_data['ACTIVATED_STATE'] == 'chờ xác minh'):?>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="permission">Quyền:</label>
-                    <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_data["ID_USER"] ?>) '>
+                    <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_data["ID_USER"] ?>)' data-toggle="modal" data-target="#modal">
                         Xác minh
                     </button>
-                    <button type="button" class="btn btn-primary mr-2">
+                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">
                         Hủy
                     </button>
-                    <button type="button" class="btn btn-primary ml-2">
+                    <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal">
                         Yêu cầu bổ sung thông tin
                     </button>
                 </div>
@@ -83,7 +86,7 @@ $user_data = get_user_data($_GET['user_id'])['data'];
                 <?php if($user_data['IS_LOCKED'] == 1):?>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="permission">Quyền:</label>
-                    <button type="button" class="btn btn-primary mr-2">
+                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">
                         Mở khóa
                     </button>
                 </div>
@@ -93,5 +96,25 @@ $user_data = get_user_data($_GET['user_id'])['data'];
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-label">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            ...
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Xác nhận</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        </div>
+        </div>
+    </div>
+    </div>
 </body>
 </html>
