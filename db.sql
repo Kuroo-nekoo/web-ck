@@ -49,9 +49,7 @@ CREATE TABLE `account` (
   `IS_LOCKED` bit(1) DEFAULT b'0',
   `DATE_LOCKED` datetime DEFAULT NULL,
   `DATE_CREATED` datetime NOT NULL,
-  `BALANCE` float NOT NULL,
-  `FRONT_ID_IMAGE_DIR` varchar(50) DEFAULT NULL,
-  `BACK_ID_IMAGE_DIR` varchar(50) DEFAULT NULL
+  `BALANCE` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -88,7 +86,9 @@ CREATE TABLE `history` (
         `RECEIVER_USER_ID` int(11),
         `RECEIVER_PHONE` varchar(20),
         `AMOUNT`  float ,
-        `TIME` varchar(20) NOT NULL
+        `TIME` varchar(20) NOT NULL,
+        `IS_ALLOW` bit DEFAULT 1,
+        `CONTENT` nvarchar(50)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
