@@ -4,20 +4,36 @@ require_once "./common.php";
 require_once "./email.php";
 
 session_start();
-print_r($_SESSION);
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
 }
 
-if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['full_name']) && isset($_POST['date_of_birth']) && isset($_POST['address'])) {
+print_r($_FILES);
+
+if (isset($_POST['email'])
+    && isset($_POST['phone_number'])
+    && isset($_POST['full_name'])
+    && isset($_POST['date_of_birth'])
+    && isset($_POST['address'])
+    && isset($_FILES['front_id_image'])
+    && isset($_FILES['back_id_image'])) {
     $email = $_POST['email'];
     $phone_number = $_POST['phone_number'];
     $full_name = $_POST['full_name'];
     $date_of_birth = $_POST['date_of_birth'];
     $address = $_POST['address'];
+    $tmp_name = $_FILES['front_id_image']['tmp_name'];
+    $name = basename($_FILES['front_id_image']['name']);
+    move_uploaded_file($tmp_name, './uploads/' . $name);
+    $front_id_image_dir = './uploads/' . $name;
 
-    $data = register($phone_number, $email, $full_name, $date_of_birth, $address);
+    $tmp_name = $_FILES['back_id_image']['tmp_name'];
+    $name = basename($_FILES['back_id_image']['name']);
+    move_uploaded_file($tmp_name, './uploads/' . $name);
+    $back_id_image_dir = './uploads/' . $name;
+
+    $data = register($phone_number, $email, $full_name, $date_of_birth, $address, $front_id_image_dir, $back_id_image_dir);
     if ($data['code'] === 0 && $data['username'] !== null && $data['password'] !== null) {
         $subject = "Username and Password: ";
         $body = "Tài khoản: " . $data['username'] . "<br/>" . "Mật khẩu: " . $data['password'];
@@ -26,7 +42,6 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     } else if ($data['code'] === 1) {
         $error_message = $data['error'];
     }
-
 }
 ?>
 <!DOCTYPE html>
@@ -64,7 +79,7 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
   <body>
     <?php include_once './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-md-4 border" method="POST" action="register.php">
+      <form class="col-md-4 border" method="POST" action="register.php" enctype="multipart/form-data">
       <div class="text-danger h5">
         <?php if (isset($error_message) && !empty($error_message)) {
     echo $error_message;
@@ -114,20 +129,21 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
           <input
             type="file"
             accept="image/*"
-            name="frontsideimg"
-            id="frontsideimg"
+            name="front_id_image"
+            id="front_id_image"
             onchange="readURL(this, '#front');"
           />
           <img id="front" />
         </div>
         <div class="form-group">
-          <label for="backsideimg">Ảnh mặt sau CMND: </label>
+          <label for="back_id_image">Ảnh mặt sau CMND: </label>
           <input
             type="file"
             accept="image/*"
-            name="backsideimg"
-            id="backsideimg"
+            name="back_id_image"
+            id="back_id_image"
             onchange="readURL(this, '#back');"
+
           />
           <img id="back"/>
         </div>

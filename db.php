@@ -15,7 +15,7 @@ function connect_database()
     return $conn;
 }
 
-function register($phone_number, $email, $full_name, $date_of_birth, $address)
+function register($phone_number, $email, $full_name, $date_of_birth, $address, $front_id_image_dir, $back_id_image_dir)
 {
     $conn = connect_database();
     $sql = "SELECT * FROM ACCOUNT WHERE EMAIL = ? OR PHONE_NUMBER = ?";
@@ -41,7 +41,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
         $password = $password . chr(rand(0, 25) + 97);
     }
 
-    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_LOCKED, DATE_CREATED, BALANCE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_LOCKED, DATE_CREATED, BALANCE, FRONT_ID_IMAGE_DIR, BACK_ID_IMAGE_DIR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
     $activated_state = "chờ xác minh";
@@ -52,8 +52,10 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
     $date_created = date('y-m-d G:i:s'); // get current date
     $date_locked = null;
     $balance = 0;
-    $stm->bind_param('sssssssisiiissi', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $balance);
-    if (!$stm->execute()) {return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);}
+    $stm->bind_param('sssssssisiiississ', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $balance, $front_id_image_dir, $back_id_image_dir);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
 
     return array('code' => 0, 'username' => $username, 'password' => $password);
 }
@@ -245,7 +247,6 @@ function sort_date_locked($a, $b)
     return strtotime($b['DATE_LOCKED']) - strtotime($a['DATE_LOCKED']);
 }
 
-
 function get_users_data_sort_date($type)
 {
     $data = get_users_data();
@@ -256,6 +257,3 @@ function get_users_data_sort_date($type)
     }
     return array('code' => 1, 'error' => 'Empty data');
 }
-
-
-
