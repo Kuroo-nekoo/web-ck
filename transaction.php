@@ -103,13 +103,13 @@ if (isset($_POST['phone_number']) && isset($_POST['money'])){
           />
         </div>
         <div class="form-group">
-          <label for="note">Ghi chú: </label>
+          <label for="content">Nội dung=========: </label>
           <input
             type="text"
-            id="note"
+            id="content"
             placeholder="Ghi chú"
             class="form-control"
-            name="note"
+            name="content"
           />
         </div>
         <div class="form-group">
