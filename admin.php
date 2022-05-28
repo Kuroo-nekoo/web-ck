@@ -1,6 +1,12 @@
 <?php
 require_once './common.php';
 require_once './db.php';
+
+session_start();
+if (!isset($_SESSION['is_admin']))  
+  header('Location: ./login.php');
+
+
 if (get_users_data()['code'] == 0) {
     $users = get_users_data()['data'];
 } else {
@@ -32,13 +38,20 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="main.js"></script>
 </head>
 
 <body>
 
-    <?php include './navbar.php'?>
+    <?php include './navbar_admin.php'?>
     <div class="container">
+      <?php if(!isset($_GET['require'])): ?>
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Chào mừng admin</h1>
+        </div>
+      <?php elseif ($_GET['require'] == 'chuaxacthuc'): ?>
           <h3 class="">Danh sách tài khoản chưa xác thực</h3>
 
           <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
@@ -56,9 +69,10 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
               <tbody>
                 <?php if ($users): ?>
                 <?php foreach ($users as $user):
-    if ($user['ACTIVATED_STATE'] === 'chờ xác minh'):
-    ?>
-		                  <tr class='clickable-row' data-toggle="tooltip" data-placement="top" title="Xem thông tin" data-href='/user.php'>
+          if ($user['ACTIVATED_STATE'] === 'chờ xác minh'):
+            $user_id = $user['USER_ID'];
+          ?>
+		                  <tr class='clickable-row' data-toggle="tooltip" data-placement="top" title="Xem thông tin" onclick ='getUserInfo(<?php echo $user_id?>)' data-href="./user_info.php">
 		                    <td><?php echo $user['USER_ID'] ?></td>
 		                    <td><?php echo $user['USERNAME'] ?></td>
 		                    <td><?php echo $user['FULL_NAME'] ?></td>
@@ -70,13 +84,15 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
                 <?php endif;?>
 
               </tbody>
+              
             </table>
           </div>
-
+          <?php elseif ($_GET['require'] == 'daxacthuc'): 
+            ?>
           <h3 class="mt-3">Danh sách tài khoản đã xác thực</h3>
 
           <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
-            <table class="table table-bordered table-striped mb-0 ">
+            <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
                     <th>User ID</th>
@@ -92,13 +108,14 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
 
                 <?php foreach ($users_sort_date_created as $user):
     if ($user['ACTIVATED_STATE'] == 'đã xác minh'):
+      $user_id = $user['USER_ID'];
     ?>
-		                  <tr>
+		                  <tr class='clickable-row' data-toggle="tooltip" data-placement="top" title="Xem thông tin" onclick ='getUserInfo(<?php echo $user_id?>)' data-href="./user_info.php">
 		                    <td><?php echo $user['USER_ID'] ?></td>
 		                    <td><?php echo $user['USERNAME'] ?></td>
 		                    <td><?php echo $user['FULL_NAME'] ?></td>
 		                    <td><?php echo $user['EMAIL'] ?></td>
-		                    <td><?php echo $user['DATE_CREATED'] ?></td>
+		                    <td><?php echo date('d-m-Y H:i:s',strtotime($user['DATE_CREATED']))?></td>
 		                    <td class='bg-success'><?php echo 'Đã xác thực' ?></td>
 		                  </tr>
 		                <?php endif;?>
@@ -107,13 +124,15 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
                 <?php endif;?>
 
               </tbody>
+              
             </table>
           </div>
-
+          <?php elseif ($_GET['require'] == 'vohieuhoa'): ?>
+          
           <h3 class="mt-3">Danh sách tài khoản bị vô hiệu hóa</h3>
 
           <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
-            <table class="table table-bordered table-striped mb-0 ">
+            <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
                     <th>User ID</th>
@@ -129,13 +148,14 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
 
                 <?php foreach ($users_sort_date_created as $user):
     if ($user['ACTIVATED_STATE'] === "vô hiệu hóa"):
+      $user_id = $user['USER_ID'];
     ?>
-		                  <tr>
+		                  <tr class='clickable-row' data-toggle="tooltip" data-placement="top" title="Xem thông tin" onclick ='getUserInfo(<?php echo $user_id?>)' data-href="./user_info.php">
 		                    <td><?php echo $user['USER_ID'] ?></td>
 		                    <td><?php echo $user['USERNAME'] ?></td>
 		                    <td><?php echo $user['FULL_NAME'] ?></td>
 		                    <td><?php echo $user['EMAIL'] ?></td>
-		                    <td><?php echo $user['DATE_CREATED'] ?></td>
+		                    <td><?php echo date('d-m-Y H:i:s',strtotime($user['DATE_CREATED']))?></td>
 		                    <td class='table-secondary'><?php echo 'vô hiệu hóa' ?></td>
 		                  </tr>
 		                <?php endif;?>
@@ -144,20 +164,23 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
                 <?php endif;?>
 
               </tbody>
+
+              
             </table>
           </div>
+          <?php elseif ($_GET['require'] == 'dabikhoa'): ?>
 
           <h3 class="mt-3">Danh sách tài khoản bị khóa</h3>
 
           <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
-            <table class="table table-bordered table-striped mb-0 ">
+            <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
                     <th>User ID</th>
                     <th>Mã số tài khoản</th>
                     <th>Tên tài khoản</th>
                     <th>Email</th>
-                    <th>Ngày tạo</th>
+                    <th>Ngày bị khóa</th>
                     <th>Trạng thái</th>
                 </tr>
               </thead>
@@ -166,18 +189,20 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
 
                 <?php foreach ($users_sort_date_locked as $user):
     if ($user['IS_LOCKED'] == 1):
+      $user_id = $user['USER_ID'];
     ?>
-		                  <tr>
+		                  <tr class='clickable-row' data-toggle="tooltip" data-placement="top" title="Xem thông tin" onclick ='getUserInfo(<?php echo $user_id?>)' data-href="./user_info.php">
 		                    <td><?php echo $user['USER_ID'] ?></td>
 		                    <td><?php echo $user['USERNAME'] ?></td>
 		                    <td><?php echo $user['FULL_NAME'] ?></td>
 		                    <td><?php echo $user['EMAIL'] ?></td>
-		                    <td><?php echo $user['DATE_LOCKED'] ?></td>
+		                    <td><?php echo date('d-m-Y H:i:s',strtotime($user['DATE_LOCKED']))?></td>
 		                    <td class='bg-danger'><?php echo 'đã bị khóa' ?></td>
 		                  </tr>
 		                <?php endif;?>
 
                 <?php endforeach;?>
+                <?php endif;?>
                 <?php endif;?>
 
               </tbody>
@@ -185,13 +210,6 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
           </div>
     </div>
 
-    <script>
-      jQuery(document).ready(function($) {
-    $(".clickable-row").click(function() {
-        window.location = $(this).data("href");
-    });
-});
-    </script>
 
 </body>
 </html>

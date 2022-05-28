@@ -4,6 +4,9 @@ require_once './db.php';
 
 session_start();
 
+if (!isset($_SESSION['user_id']))  
+  header('Location: ./login.php');
+
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
@@ -30,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
 </head>
 
 <body>
-	<?php require_once 'navbar.php'?>
+	<?php require_once 'navbar_user.php'?>
 	<div class="col-md-6 ml-auto">
 		<form>
 			<div class="form-group form-row">
