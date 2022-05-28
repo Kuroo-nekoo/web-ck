@@ -16,8 +16,6 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
     $full_name = $_POST['full_name'];
     $date_of_birth = $_POST['date_of_birth'];
     $address = $_POST['address'];
-    echo $date_of_birth;
-    echo date('Y-m-d');
 
     $data = register($phone_number, $email, $full_name, $date_of_birth, $address);
     if ($data['code'] === 0 && $data['username'] !== null && $data['password'] !== null) {
@@ -60,8 +58,8 @@ if (isset($_POST['email']) && isset($_POST['phone_number']) && isset($_POST['ful
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./main.css" />
-    <script src="./script.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./main.js"></script>
   </head>
   <body>
     <?php include_once './navbar.php'?>

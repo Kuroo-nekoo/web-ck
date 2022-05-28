@@ -14,9 +14,10 @@ if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] 
     if (isset($_POST['otp'])) {
 
         $otp = $_SESSION['otp']['otp'];
-      echo $otp;
-      echo $_POST['otp'];
+        echo $otp;
+        echo $_POST['otp'];
         if ($_POST['otp'] === $otp) {
+            unset($_SESSION['otp']);
             header('Location: change_password_first_time.php');
         }
     }
@@ -52,7 +53,7 @@ if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] 
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./register.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <?php include './navbar.php'?>

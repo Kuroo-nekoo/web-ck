@@ -20,4 +20,6 @@ echo '<nav class="mb-3 navbar navbar-expand-lg navbar-light bg-light">
           </li>
         </ul>
       </div>
-    </nav>';
+    </nav>'
+  ;
+  ?>

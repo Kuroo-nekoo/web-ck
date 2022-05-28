@@ -10,13 +10,13 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
     && $_POST['new_password'] !== '' && $_POST['confirm_new_password'] !== ''
     && isset($user_id)) {
     $new_password = $_POST['new_password'];
-    $_SESSION['is_new_user'] = 0;
+    unset($_SESSION['is_new_user']);
     if (strlen($new_password) < 6) {
         $error_message = "Vui lòng nhập mật khẩu có độ dài lớn hơn 6 ký tự";
     } else {
         $data = change_password_first_time($new_password, $user_id);
         if ($data['code'] === 0) {
-            header('Location: login.php');
+            header('Location: user.php');
         } else if ($data['code'] === 1) {
             $error_message = $data['error'];
         }
@@ -52,7 +52,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./register.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body style="height: 100vh;" >
   <?php require_once './navbar.php'?>

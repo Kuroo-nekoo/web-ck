@@ -41,15 +41,19 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address)
         $password = $password . chr(rand(0, 25) + 97);
     }
 
-    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_CREATED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_LOCKED, DATE_CREATED, BALANCE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
     $activated_state = "chờ xác minh";
     $fail_login_count = 0;
     $abnormal_login_count = 0;
-    $is_locked = 1;
-    $date_created = date("Y-m-d");
-    $stm->bind_param('sssssssisiiis', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_created);if (!$stm->execute()) {return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);}
+    $is_locked = 0;
+    date_default_timezone_set('asia/ho_chi_minh'); //set timezone
+    $date_created = date('y-m-d G:i:s'); // get current date
+    $date_locked = null;
+    $balance = 0;
+    $stm->bind_param('sssssssisiiissi', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $balance);
+    if (!$stm->execute()) {return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);}
 
     return array('code' => 0, 'username' => $username, 'password' => $password);
 }
@@ -66,7 +70,9 @@ function login($username, $password)
 
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
-    if ($result->num_rows === 0) {
+    if ($data['IS_LOCKED'] === 1) {
+        return array('code' => 1, 'error' => 'Tài khoản đã bị khóa', 'is_locked' => 1);
+    } else if ($result->num_rows === 0) {
         return array('code' => 1, 'error' => 'Sai tên đăng nhập');
     } else if (isset($data['PASSWORD']) && $data['PASSWORD'] != $password) {
         if ($data['FAIL_LOGIN_COUNT'] === null) {
@@ -85,9 +91,11 @@ function login($username, $password)
             if ($data['ABNORMAL_LOGIN_COUNT'] === 0) {
                 $abnormal_login_count = 1;
                 $fail_login_count = 0;
-                $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ? WHERE USERNAME = ?";
+                date_default_timezone_set('asia/ho_chi_minh'); // set timezone
+                $date_locked = date('y-m-d G:i:s'); // get current date
+                $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, DATE_LOCKED = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
-                $stm->bind_param('iis', $fail_login_count, $abnormal_login_count, $username);
+                $stm->bind_param('iiss', $fail_login_count, $abnormal_login_count, $date_locked, $username);
 
                 if (!$stm->execute()) {
                     return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
@@ -95,9 +103,10 @@ function login($username, $password)
 
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa tạm thời', 'abnormal_login_count' => $abnormal_login_count);
             } else if ($data['ABNORMAL_LOGIN_COUNT'] === 1) {
-                $is_locked = 0;
+                $is_locked = 1;
                 $fail_login_count = 0;
                 $abnormal_login_count = 0;
+
                 $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = ?, ABNORMAL_LOGIN_COUNT = ?, IS_LOCKED = ? WHERE USERNAME = ?";
                 $stm = $conn->prepare($sql);
                 $stm->bind_param('iiis', $fail_login_count, $abnormal_login_count, $is_locked, $username);
@@ -105,13 +114,20 @@ function login($username, $password)
                 if (!$stm->execute()) {
                     return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
                 }
+
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa vĩnh viễn', 'is_locked' => $is_locked);
             }
         }
         return array('code' => 1, 'error' => 'Sai mật khẩu');
+    } else {
+        $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = 0, ABNORMAL_LOGIN_COUNT = 0 WHERE USERNAME = ?";
+        $stm = $conn->prepare($sql);
+        $stm->bind_param('s', $username);
+        if (!$stm->execute()) {
+            return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+        }
+        return array('code' => 0, 'data' => $data);
     }
-
-    return array('code' => 0, 'data' => $data);
 }
 
 function change_password_first_time($new_password, $user_id)
@@ -219,18 +235,27 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
-function date_sort($a, $b)
+function sort_date_created($a, $b)
 {
     return strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
 }
 
-function get_users_data_sort_date()
+function sort_date_locked($a, $b)
+{
+    return strtotime($b['DATE_LOCKED']) - strtotime($a['DATE_LOCKED']);
+}
+
+
+function get_users_data_sort_date($type)
 {
     $data = get_users_data();
     if ($data['code'] == 0) {
         $result = $data['data'];
-        usort($result, "date_sort");
+        usort($result, $type);
         return array('code' => 0, 'data' => $result);
     }
     return array('code' => 1, 'error' => 'Empty data');
 }
+
+
+
