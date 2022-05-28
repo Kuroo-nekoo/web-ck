@@ -15,7 +15,8 @@ if (!$_SESSION['user_id']) {
 $user_id = $_SESSION['user_id'];
 
 
-if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee_transaction'])){
+if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee_transaction']) && isset($_POST['content'] )){
+    $content= $_POST['content'];
     $who_pay = $_POST['fee_transaction'];
     $phone_number= $_POST['phone_number'];
     $money= $_POST['money'];
@@ -27,7 +28,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     }
     $result = $stm->get_result();
     $row= $result->fetch_assoc();
-    $old_money = $row[ 'BALANCE'];// old money of receiver
+    $old_money = $row['BALANCE'];// old money of receiver
     $new_money = $old_money + $money; // new money of receiver
     $fee_transaction =$money*5/100;
     if ($who_pay ==='sender'){ 
@@ -51,6 +52,11 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
         send_email($subject, $body, $email_address);
 
     }
+    // check allow
+    if($_POST['money'] > 5000000){
+        $is_allow =0;
+    }
+    $is_allow=1;
      // update money for receiver
      $sql3 = "Update account set BALANCE= ?-? where phone_number =?";
      $stm3 = $conn->prepare($sql3);
@@ -70,7 +76,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     if($fee_transaction ==='sender')
 
     // send mail to notice
-    $subject1 = "Balance fluctuations";
+    $subject = "Balance fluctuations";
     $body = "Tài khoản: + " .$money.'k' . "<br/>" . "Số dư" . ($new_money-$fee_transaction);
     $email_address = $email;
     send_email($subject, $body, $email_address);
@@ -78,11 +84,11 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     // add to history table
     date_default_timezone_set('Asia/Ho_Chi_Minh');           
     $date = date('Y-m-d H:i:s',time());
-    $sql2="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME) values (?,?,?,?)";
-    $stm2 = $conn->prepare($sql2);
-    $stm2->bind_param('isds',$user_id,$phone_number,$money,$date);
-    if (!$stm2->execute()) {
-        echo "Error: " . $sql2 . "<br>" . $conn->error;
+    $sql5="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME,IS_ALLOW,CONTENT) values (?,?,?,?,?,?)";
+    $stm5 = $conn->prepare($sql5);
+    $stm5->bind_param('isdsbs', $user_id, $phone_number, $money, $date, $is_allow, $content);
+    if (!$stm5->execute()) {
+        echo "Error: " . $sql5 . "<br>" . $conn->error;
     }
   }
 ?>$
@@ -153,13 +159,13 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
                 </select>
             </div>
         <div class="form-group">
-          <label for="note">Ghi chú: </label>
+          <label for="content">Ghi chú: </label>
           <input
             type="text"
-            id="note"
+            id="content"
             placeholder="Ghi chú"
             class="form-control"
-            name="note"
+            name="content"
           />
         </div>
         <div class="form-group">
