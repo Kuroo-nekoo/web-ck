@@ -16,7 +16,6 @@ function getUserInfo(user_id) {
 }
 
 
-
 function verification(user_id) {
-  $('.modal-title').html(user_id);
+  $('.modal-title').html('Bạn có chắc xác minh tài khoản ?');
 }

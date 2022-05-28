@@ -49,7 +49,7 @@ CREATE TABLE `account` (
   `IS_LOCKED` bit(1) DEFAULT b'0',
   `DATE_LOCKED` datetime DEFAULT NULL,
   `DATE_CREATED` datetime NOT NULL,
-  `BALANCE` float NOT NULL
+  `BALANCE` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

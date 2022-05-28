@@ -7,7 +7,7 @@ if (!isset($_SESSION['is_admin']))
   header('Location: ./login.php');
 
 $user_data = get_user_data($_GET['user_id'])['data'];
-
+$user_id = $user_data['USER_ID'];
 
 ?>
 
@@ -23,13 +23,13 @@ $user_data = get_user_data($_GET['user_id'])['data'];
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
-    <script src="main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <script type="" src="./main.js"></script>
 </head>
 
 <body>
 <?php include './navbar_admin.php'?>
-    <?php $user_data?>
+    <?php echo json_encode($user_id) ?>
     <div class="container">
         <div class="row">
             <div class="col-md-6 mr-auto">
@@ -72,14 +72,14 @@ $user_data = get_user_data($_GET['user_id'])['data'];
                 <?php if($user_data['ACTIVATED_STATE'] == 'chờ xác minh'):?>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="permission">Quyền:</label>
-                    <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_data["ID_USER"] ?>)' data-toggle="modal" data-target="#modal">
+                    <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
                         Xác minh
                     </button>
                     <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">
                         Hủy
                     </button>
                     <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal">
-                        Yêu cầu bổ sung thông tin
+                        Bổ sung thông tin
                     </button>
                 </div>
                 <?php endif;?>
