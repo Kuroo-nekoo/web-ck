@@ -51,6 +51,8 @@ $result = $conn->query($sql);
                 <th>RECEIVER_PHONE</th>
                 <th>AMOUNT</th>
                 <th>TIME</th>
+                <th>IS_ALLOW</th>
+                <th>CONTENT</th>
             </tr>
         </thead>
         <tbody>
@@ -65,6 +67,9 @@ while ($row = $result->fetch_assoc()) {
         <td><?php echo $row['RECEIVER_PHONE']; ?></td>
         <td><?php echo $row['AMOUNT']; ?></td>
         <td><?php echo $row['TIME']; ?></td>
+        <td><?php echo $row['IS_ALLOW']; ?></td>
+        <td><?php echo $row['CONTENT']; ?></td>
+
 
     </tr>
     <?php
