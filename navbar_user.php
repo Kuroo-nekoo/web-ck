@@ -17,12 +17,14 @@ echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         <a class="dropdown-item" href="/user.php?require=demo">demo</a>
+        <a class="dropdown-item" href="/transaction.php">Chuyển tiền</a>
+        <a class="dropdown-item" href="/recharge.php">Nạp tiền</a>
+        <a class="dropdown-item" href="/history.php">Lịch sử giao dịch</a>
+        <a >
     </li>
-
-
     <li class="nav-item">
     <a class="nav-link" href="./logout.php"> Logout </a>
   </li>
-  </ul>
+  </ul>A
 </div>
 </nav>';

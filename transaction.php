@@ -7,7 +7,7 @@ if (isset($_SESSION['is_new_user'])) {
   $is_new_user = $_SESSION['is_new_user'];
   check_new_user($is_new_user);
 }
-
+$type='transaction';
 $conn = connect_database();
 if (!$_SESSION['user_id']) {
   header('Location: login.php');
@@ -100,9 +100,9 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     // add to history table
     date_default_timezone_set('Asia/Ho_Chi_Minh');           
     $date = date('Y-m-d H:i:s',time());
-    $sql5="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME,IS_ALLOW,CONTENT) values (?,?,?,?,?,?)";
+    $sql5="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME,IS_ALLOW,CONTENT,TYPE) values (?,?,?,?,?,?,?)";
     $stm5 = $conn->prepare($sql5);
-    $stm5->bind_param('isdsbs', $user_id, $phone_number, $money, $date, $is_allow, $content);
+    $stm5->bind_param('isdsbss', $user_id, $phone_number, $money, $date, $is_allow, $content,$type);
     if (!$stm5->execute()) {
         echo "Error: " . $sql5 . "<br>" . $conn->error;
     }
