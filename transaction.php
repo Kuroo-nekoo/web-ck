@@ -3,10 +3,7 @@ require_once "./db.php";
 require_once "./common.php";
 require_once "./email.php";
 session_start();
-if (isset($_SESSION['is_new_user'])) {
-  $is_new_user = $_SESSION['is_new_user'];
-  check_new_user($is_new_user);
-}
+
 $type='transaction';
 $conn = connect_database();
 if (!$_SESSION['user_id']) {
@@ -98,11 +95,11 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
    }
     
     // add to history table
-    date_default_timezone_set('Asia/Ho_Chi_Minh');           
-    $date = date('Y-m-d H:i:s',time());
+    date_default_timezone_set('asia/ho_chi_minh'); //set timezone
+    $date = date('y-m-d G:i:s');
     $sql5="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME,IS_ALLOW,CONTENT,TYPE) values (?,?,?,?,?,?,?)";
     $stm5 = $conn->prepare($sql5);
-    $stm5->bind_param('isdsbss', $user_id, $phone_number, $money, $date, $is_allow, $content,$type);
+    $stm5->bind_param('isissss', $user_id, $phone_number, $money, $date, $is_allow, $content,$type);
     if (!$stm5->execute()) {
         echo "Error: " . $sql5 . "<br>" . $conn->error;
     }
@@ -138,7 +135,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     ></script>
   </head>
   <body>
-    <?php include_once './navbar_user.php'?>
+  <?php require_once 'navbar_user.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4 border" action="transaction.php" method="post">
       <div class="text-danger h5">
@@ -157,19 +154,16 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
         </div>
         <div class="form-group">
           <label for="money">Số tiền: </label>
-          <input
-            id="email"
-
-            class="form-control"
-            type="money"
-            placeholder="Số tiền"
-            name="money"
-            require
-          />
+          <input type="text" 
+          name="currency-field" 
+          id="currency-field" 
+          pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" 
+          value="" data-type="currency" 
+          placeholder="Số tiền">
         </div>
         <div class="form-group">
                 <label for="fee_transaction">Phí chuyển (5%): </label>
-                <select name="fee_transaction" id="fee_transaction" class="custom-select" " >
+                <select name="fee_transaction" id="fee_transaction" class="custom-select" >
                     <option value="sender">Người gửi trả</option>
                     <option value="receiver">Người nhận trả</option>
                 </select>

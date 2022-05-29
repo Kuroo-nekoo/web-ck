@@ -87,8 +87,8 @@ COMMIT;
               `USER_ID` int(11) not null,
               `RECEIVER_USER_ID` int(11),
               `RECEIVER_PHONE` varchar(20),
-              `AMOUNT`  float ,
-              `TIME` varchar(20) NOT NULL,
+              `AMOUNT`  int ,
+              `TIME` datetime NOT NULL,
               `IS_ALLOW` bit DEFAULT 1,
               `CONTENT` varchar(50),
               `TYPE` varchar(20)
