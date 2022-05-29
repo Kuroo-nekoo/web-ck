@@ -257,3 +257,16 @@ function get_users_data_sort_date($type)
     }
     return array('code' => 1, 'error' => 'Empty data');
 }
+
+function update_state($user_id, $state) {
+    $conn = connect_database();
+    $sql = "UPDATE ACCOUNT SET ACTIVATED_STATE = '{$state}'  WHERE USER_ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $user_id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}

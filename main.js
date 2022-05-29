@@ -16,7 +16,22 @@ function getUserInfo(user_id) {
 }
 
 
-
 function verification(user_id) {
-  $('.modal-title').html(user_id);
+  $('.modal-title').html('Xác minh tài khoản');
+  $('.modal-body').html('Bạn có muốn xác minh cho tài khoản này?');
+  var url = window.location.href
+  console.log(url)
+  $('#accept').click(function () {
+    location.replace(url + '&is_accepted=1');
+  })
+}
+
+function disable(user_id) {
+  $('.modal-title').html('Vô hiệu hóa tài khoản');
+  $('.modal-body').html('Bạn có muốn vô hiệu hóa tài khoản này?');
+  var url = window.location.href
+  console.log(url)
+  $('#accept').click(function () {
+    location.replace(url + '&is_rejected=1');
+  })
 }
