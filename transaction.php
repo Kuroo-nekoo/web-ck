@@ -122,7 +122,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     ></script>
   </head>
   <body>
-    <?php include_once './navbar.php'?>
+    <?php include_once './navbar_user.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4 border" action="transaction.php" method="post">
       <div class="text-danger h5">

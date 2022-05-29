@@ -9,6 +9,20 @@ if (!isset($_SESSION['is_admin']))
 $user_data = get_user_data($_GET['user_id'])['data'];
 $user_id = $user_data['USER_ID'];
 
+if (isset($_GET['is_accepted'])) {
+  if ($_GET['is_accepted'] == 1) {
+      $result = update_state($user_id,'đã xác minh');
+      header('Location: ./user_info.php?user_id=' . $user_id);
+  }
+}
+
+if (isset($_GET['is_rejected'])) {
+    if ($_GET['is_rejected'] == 1) {
+        $result = update_state($user_id,'vô hiệu hóa');
+        header('Location: ./user_info.php?user_id=' . $user_id);
+    }
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -23,18 +37,22 @@ $user_id = $user_data['USER_ID'];
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link rel="stylesheet" href="./style.css">
-    <script type="" src="./main.js"></script>
+    <script type="" src="http://localhost/main.js"></script>
 </head>
 
 <body>
 <?php include './navbar_admin.php'?>
-    <?php echo json_encode($user_id) ?>
     <div class="container">
         <div class="row">
             <div class="col-md-6 mr-auto">
             <h3>Thông tin người dùng</h3>
             <form>
+                <div class="form-group form-row">
+                    <label for="name" class="col-md-3">User name:</label>
+                    <input class="form-control col-md-8"  type="text" value="<?php echo $user_data['USERNAME']; ?> " disabled/>
+                </div>
                 <div class="form-group form-row">
                     <label for="name" class="col-md-3">Tên người dùng:</label>
                     <input class="form-control col-md-8"  type="text" value="<?php echo $user_data['FULL_NAME']; ?> " disabled/>
@@ -75,7 +93,7 @@ $user_id = $user_data['USER_ID'];
                     <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
                         Xác minh
                     </button>
-                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">
+                    <button type="button" class="btn btn-primary mr-2" onclick='disable(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
                         Hủy
                     </button>
                     <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal">
@@ -110,7 +128,7 @@ $user_id = $user_data['USER_ID'];
             ...
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Xác nhận</button>
+            <button type="button" class="btn btn-primary" id="accept">Xác nhận</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
         </div>
         </div>
