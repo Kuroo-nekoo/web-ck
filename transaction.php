@@ -30,56 +30,72 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     $row= $result->fetch_assoc();
     $old_money = $row['BALANCE'];// old money of receiver
     $new_money = $old_money + $money; // new money of receiver
+    $email= $row['EMAIL'];
     $fee_transaction =$money*5/100;
+    // money of sender
+
+    $sql0 = "Select * from  account WHERE USER_ID =?";    
+    $stm0 = $conn->prepare($sql0);
+    $stm0->bind_param('i',$user_id);
+    if (!$stm0->execute()) {
+        echo "Error: " . $sql0 . "<br>" . $conn->error;
+    }
+
+    $result0 = $stm0->get_result();
+    $row0= $result0->fetch_assoc();
+    $old_money0 = $row0['BALANCE'];
+    if($_POST['money'] > 5000000){
+      $is_allow =0;
+   }
+   
+   $is_allow=1;
     if ($who_pay ==='sender'){ 
       // update money for receiver
         $sql1 = "Update account set BALANCE= ?+? where phone_number =?";
         $stm1 = $conn->prepare($sql1);
-        $stm1->bind_param('ds',$old_money,$money,$phone_number);
+        $stm1->bind_param('dds',$old_money,$money,$phone_number);
         if (!$stm1->execute()) {
             echo "Error: " . $sql1 . "<br>" . $conn->error;
         }
         // update money for sender
-        $sql2= "update account set balance =balance -?-? WHERE USER_ID =?";
+        $sql2= "update `account` set balance =?-?-? WHERE USER_ID =?";
+        $new_money0= $old_money0-$money-$fee_transaction;
         $stm2= $conn->prepare($sql2);
-        $stm2->bind_param('ddi',$money,$fee_transaction,$user_id);
-          // send mail to notice
-        $email= $row['EMAIL'];
-        if($fee_transaction ==='sender')
+        $stm2->bind_param('dddi',$old_money0,$fee_transaction,$money,$user_id);
+        if (!$stm2->execute()) {
+          echo "Error: " . $sql4 . "<br>" . $conn->error;
+         }
         $subject = "Balance fluctuations";
         $body = "Tài khoản: + " .$money.'k' . "<br/>" . "Số dư" . $new_money."k";
         $email_address = $email;
         send_email($subject, $body, $email_address);
 
     }
+    else{
     // check allow
-    if($_POST['money'] > 5000000){
-        $is_allow =0;
-    }
-    $is_allow=1;
      // update money for receiver
-     $sql3 = "Update account set BALANCE= ?-? where phone_number =?";
+     $sql3 = "Update account set balance= ?-? where phone_number =?";
      $stm3 = $conn->prepare($sql3);
      $stm3->bind_param('dds',$new_money,$fee_transaction,$phone_number);
      if (!$stm3->execute()) {
          echo "Error: " . $sql3 . "<br>" . $conn->error;
      }
      // update money for sender
-     $sql4= "update `account` set `balance` =`balance` -?-? WHERE `USER_ID` =?";
+     $sql4= "update `account` set balance =? WHERE USER_ID =?";
+     $new_money0= $old_money0-$money;
      $stm4= $conn->prepare($sql4);
-     $stm4->bind_param('ddi',$fee_transaction,$money,$user_id);
+     $stm4->bind_param('di',$new_money0,$user_id);
 
      if (!$stm4->execute()) {
       echo "Error: " . $sql4 . "<br>" . $conn->error;
-    }
-    $email= $row['EMAIL'];
-    if($fee_transaction ==='sender')
+     }
 
     // send mail to notice
     $subject = "Balance fluctuations";
     $body = "Tài khoản: + " .$money.'k' . "<br/>" . "Số dư" . ($new_money-$fee_transaction);
     $email_address = $email;
     send_email($subject, $body, $email_address);
+   }
     
     // add to history table
     date_default_timezone_set('Asia/Ho_Chi_Minh');           
@@ -91,7 +107,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
         echo "Error: " . $sql5 . "<br>" . $conn->error;
     }
   }
-?>$
+?>$ 
 <!DOCTYPE html>
 <html lang="en">
   <head>
