@@ -1,15 +1,18 @@
-function readURL(input, placeToRender) {
+function readURL(input, placeToRender, placeToHide) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
+      $(placeToHide).hide();
       $(placeToRender).attr("src", e.target.result);
       $(placeToRender).addClass("img_show");
     };
 
     reader.readAsDataURL(input.files[0]);
   }
+
 }
+
 
 function getUserInfo(user_id) {
   location.replace("/user_info.php?user_id=" + user_id);

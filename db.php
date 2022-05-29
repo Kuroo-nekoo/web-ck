@@ -270,3 +270,16 @@ function update_state($user_id, $state) {
     $stm->execute();
     return array('code' => 0);
 }
+
+function update_id_card ($user_id, $front_id_image_dir, $back_id_image_dir) {
+    $conn = connect_database();
+    $sql = "UPDATE ACCOUNT SET FRONT_ID_IMAGE_DIR = '{$front_id_image_dir}', BACK_ID_IMAGE_DIR = '{$back_id_image_dir}' WHERE USER_ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $user_id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}

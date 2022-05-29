@@ -87,6 +87,15 @@ if (isset($_GET['is_rejected'])) {
                         ?>
                     <input class= '<?php echo $bg_color?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" disabled/>
                 </div>
+                <div class="form-group form-row">
+				<label class="col-md-3" for="cmnd">CMND</label>
+				<div class="col-md-4" id="img-1"> 
+					<img class="id-card" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
+				</div>
+				<div class="col-md-4" id="img-2"> 
+					<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau	 cmnd">
+				</div>
+			</div>
                 <?php if($user_data['ACTIVATED_STATE'] == 'chờ xác minh'):?>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="permission">Quyền:</label>
