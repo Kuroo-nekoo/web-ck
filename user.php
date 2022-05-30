@@ -160,7 +160,6 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 				</div>
 			</form>
 			</div>
-<<<<<<< HEAD
 		</form>
 		<?php if ($user_data['ACTIVATED_STATE'] === 'chờ cập nhật') {?>
 		<form method="POST" action="user.php" enctype="multipart/form-data">
@@ -191,10 +190,8 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 		</form>
 		<?php }?>
 		<a href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
-=======
 
 		</div>
->>>>>>> 0d9c6101d736a3d044db04982ebce5d87d909221
 	</div>
 </body>
 </html>
