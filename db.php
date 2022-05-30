@@ -72,7 +72,7 @@ function login($username, $password)
 
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
-    if ($data['IS_LOCKED'] === 1) {
+    if (isset($data['IS_LOCKED']) && $data['IS_LOCKED'] === 1) {
         return array('code' => 1, 'error' => 'Tài khoản đã bị khóa', 'is_locked' => 1);
     } else if ($result->num_rows === 0) {
         return array('code' => 1, 'error' => 'Sai tên đăng nhập');

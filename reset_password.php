@@ -28,6 +28,7 @@ if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] 
         }
     }
 } else {
+    unset($_SESSION['otp']);
     header('Location: forgot_password.php');
 }
 ?>
