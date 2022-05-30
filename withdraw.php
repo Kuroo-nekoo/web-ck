@@ -15,11 +15,10 @@ require_once "./common.php";
   $user_id = $_SESSION['user_id'];
   $error='';
   $data_db3=array();
-  $type='recharge';
-  // check input
+  $type='withdraw';
   $data=array();
 
-  if (isset($_POST['credit_id']) && isset($_POST['cvv'] )&& isset($_POST['expiration_date']) ){
+  if (isset($_POST['credit_id']) && isset($_POST['cvv'] )&& isset($_POST['expiration_date'])  && isset($_POST['money'])){
 
     $data['credit_id'] = isset($_POST['credit_id']) ? $_POST['credit_id'] : '';
     $data['expiration_date'] = isset($_POST['expiration_date']) ? $_POST['expiration_date'] : '';
@@ -27,15 +26,18 @@ require_once "./common.php";
     $data['money'] = isset($_POST['money']) ? $_POST['money'] : '';
     if( $data['credit_id']==='' ||  $data['expiration_date']==='' ||  $data['cvv']==='' ||  $data['money']===''){
       $error='Vui lòng điền đầy đủ thông tin';
+    
     }
     else if(strlen($_POST['credit_id'])!==6){
       $error='Định dạng thẻ không hợp lệ!';
+      die('Định dạng không hợp lệ !');
     }
     $sql0 = "Select `credit_id` from  credit";    
     $result0= $conn->query($sql0);
     $data_db0= $result0->fetch_all();
     foreach ($data_db0 as $temp){
       if($data['credit_id']===$temp){
+        $error='';
         break;
       }
       $error='Thẻ không hỗ trợ !';  
@@ -77,86 +79,45 @@ require_once "./common.php";
         $error="Thông tin không trùng khớp! ";
       }
     } 
+    if((int)$data['money'] %50000!= 0){
+        $error= "Số tiền phải là bội số của 50000";
+    }
     // recharge 
     if($error===''){
-      if($data['credit_id']===$data_db3[0][0]){
-        // lấy thông tin tai khoản người gửi 
-        $sql4 = "Select * from  account WHERE user_id=?";    
-        $stm4 = $conn->prepare($sql4);
-        $stm4->bind_param('i',$user_id);
-        if (!$stm4->execute()) {
-            echo "Error: " . $sql4 . "<br>" . $conn->error;
-        }
-
-        $result4 = $stm4->get_result();
-        $row4= $result4->fetch_assoc();
-        $old_money = $row4['BALANCE'];
-        $sql5= "update `account` set balance =? WHERE USER_ID =?";
-        $new_money0= $old_money+(int)$data['money'] ;
-        $stm5= $conn->prepare($sql5);
-        $stm5->bind_param('di',$new_money0,$user_id);
-
-          if (!$stm5->execute()) {
-            echo "Error: " . $sql5 . "<br>" . $conn->error;
-          }
-        $error="Nạp thành công !";
-          date_default_timezone_set('Asia/Ho_Chi_Minh');           
-          $date = date('Y-m-d H:i:s',time());
-          $sql6="insert into history (USER_ID,AMOUNT,TIME,TYPE) values (?,?,?,?)";
-          $conn->close();
-          $conn = connect_database();
-          $stm6 = $conn->prepare($sql6);
-          $stm6->bind_param('idss', $user_id, $data['money'], $date, $type);
-          if (!$stm6->execute()) {
-                echo "Error: " . $sql6 . "<br>" . $conn->error;
-           }
-       
-        }
-
-    
-      else if($data['credit_id']===$data_db3[1][0]){
-        if($data['money']>1000000){
-          $error='Hạn mức nạp tiền của thẻ là 1tr !';
-        }
-        else{
-          $sql7 = "Select * from  account WHERE user_id=?";    
-          $stm7 = $conn->prepare($sql7);
-          $stm7->bind_param('i',$user_id);
-          if (!$stm7->execute()) {
-              echo "Error: " . $sql4 . "<br>" . $conn->error;
-          }
-  
-          $result7 = $stm7->get_result();
-          $row7= $result7->fetch_assoc();
-          $old_money = $row7['BALANCE'];
-          $sql8= "update `account` set balance =? WHERE USER_ID =?";
-          $new_money0= $old_money+(int)$data['money'] ;
-          $stm8= $conn->prepare($sql8);
-          $stm8->bind_param('di',$new_money0,$user_id);
-  
-            if (!$stm8->execute()) {
-              echo "Error: " . $sql5 . "<br>" . $conn->error;
+            $sql4 = "Select * from  account WHERE user_id=?";    
+            $stm4 = $conn->prepare($sql4);
+            $stm4->bind_param('i',$user_id);
+            if (!$stm4->execute()) {
+                echo "Error: " . $sql4 . "<br>" . $conn->error;
             }
-          $error="Nạp thành công !";
-          // add history
-          date_default_timezone_set('Asia/Ho_Chi_Minh');  
-                
-        $date = date('Y-m-d H:i:s',time());
-        $sql9="insert into history (USER_ID,AMOUNT,TIME,TYPE) values (?,?,?,?)";
-        $stm9 = $conn->prepare($sql9);
-        $stm9->bind_param('idss', $user_id, $data['money'], $date, $type);
+
+            $result4 = $stm4->get_result();
+            $row4= $result4->fetch_assoc();
+            $old_money = $row4['BALANCE'];
+            $fee= (int)$data['money']*5/100;
+            $sql5= "update `account` set balance =? WHERE USER_ID =?";
+            $new_money0= $old_money-(int)$data['money']- $fee ;
+            $stm5= $conn->prepare($sql5);
+            $stm5->bind_param('di',$new_money0,$user_id);
+
+            if (!$stm5->execute()) {
+                echo "Error: " . $sql5 . "<br>" . $conn->error;
+            }
+            $error= "Rút tiền thành công !";
+            date_default_timezone_set('Asia/Ho_Chi_Minh');           
+            $date = date('Y-m-d H:i:s',time());
+            $sql6="insert into history (USER_ID,AMOUNT,TIME,TYPE) values (?,?,?,?)";
+            $conn->close();
+            $conn = connect_database();
+            $stm6 = $conn->prepare($sql6);
+            $stm6->bind_param('idss', $user_id, $data['money'], $date, $type);
+            if (!$stm6->execute()) {
+                    echo "Error: " . $sql6 . "<br>" . $conn->error;
+            }
+        
         }
-        if (!$stm9->execute()) {
-          echo "Error: " . $sql9 . "<br>" . $conn->error;
-          }
-        }
-  
-        else{
-          $error="Thẻ hết tiền !";
-        }
-      }
-      
-  }  
+        
+    }   
 
   
 
@@ -194,10 +155,10 @@ require_once "./common.php";
   <body>
     <?php include_once './navbar.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post"  ">
+      <form name="rechargeForm" class="col-md-4 border" action="withdraw.php" method="post"  ">
       <div class="text-danger h5">
        </div>
-        <h1>Nạp tiền </h1>
+        <h1>Rút tiền </h1>
         <div class="form-group">
           <label for="credit_id">Số thẻ tín dụng: </label>
           <input
