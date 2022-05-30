@@ -18,7 +18,7 @@ if (isset($_POST['email_phone_number']) && $_POST['email_phone_number'] !== '') 
             $otp = $_SESSION['otp'];
         } else {
             $otp = gen_otp();
-            $_SESSION['otp'] = array('otp' => $otp, 'started' => time());
+            $_SESSION['otp'] = array('otp' => $otp, 'started' => time(), 'email_phone_number' => $email_phone_number);
             $subject = "OTP";
             $body = "Mã OTP của bạn là: $otp";
             send_email($subject, $body, $email_phone_number);
@@ -74,11 +74,11 @@ if (isset($error_message) && !empty($error_message)) {
         </div>
         <h1>Quên mật khẩu:</h1>
         <div class="form-group">
-          <label for="otp">Số điện thoại/ email:</label>
+          <label for="otp">Email:</label>
           <input
             id="email_phone_number"
             class="form-control"
-            placeholder="Số điện thoại/ email"
+            placeholder="Email"
             type="text"
             name="email_phone_number"
           />
