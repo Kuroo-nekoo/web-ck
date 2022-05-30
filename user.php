@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
     $user_data = get_user_data($user_id)['data'];
 }
 
-if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'] )&& isset($_FILES['update_id_image'])
+if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image']) && isset($_FILES['update_id_image'])
     && !empty($_FILES['front_id_image']) && !empty($_FILES['back_id_image'])) {
     $tmp_name = $_FILES['front_id_image']['tmp_name'];
     $name = basename($_FILES['front_id_image']['name']);
@@ -108,15 +108,15 @@ if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
 				<?php endif;?>
 
 				<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
-				<div class="form-group form-row">
-					<label class="col-md-3" for="cmnd">CMND</label>
+					<span class="col-md-3" for="cmnd">CMND:</span>
 					<div class="col-md-4" id="img-1">
+						<span>Mặt trước chứng minh</span>
 						<img class="id-card" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
 					</div>
 					<div class="col-md-4" id="img-2">
+						<span>Mặt sau chứng minh</span>
 						<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
 					</div>
-				</div>
 				<?php else: ?>
 					<div class="form-group form-row">
 						<label class="col-md-3" for="frontsideimg">Ảnh mặt trước CMND: </label>
