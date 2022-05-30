@@ -3,9 +3,10 @@ require_once './db.php';
 require_once './common.php';
 
 session_start();
-// if ($_SESSION['user_id']) {
-//     $user_id = $_SESSION['user_id'];
-// }
+if (isset($_SESSION['is_admin']))  
+      header('Location: ./admin.php');
+if (isset($_SESSION['user_id']))  
+    header('Location: ./user.php');
 
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];

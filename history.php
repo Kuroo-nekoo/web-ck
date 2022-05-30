@@ -1,8 +1,10 @@
 <?php
 require_once "./db.php";
 require_once "./common.php";
+
+
 $conn = connect_database();
-$sql = "Select * from  history";
+$sql = "Select * from  history where type ='transaction'";
 $result = $conn->query($sql);
 
 ?>
@@ -37,7 +39,7 @@ $result = $conn->query($sql);
     ></script>
   </head>
   <body>
-    <?php include_once './navbar.php'?>
+  <?php require_once 'navbar_admin.php'?>
     <div class="container">
         <h2 style="text-align: center">Transaction History</h2>
 
@@ -47,10 +49,11 @@ $result = $conn->query($sql);
         <thead>
             <tr>
                 <th>ID</th>
-                <th>RECEIVER_USER</th>
-                <th>RECEIVER_PHONE</th>
-                <th>AMOUNT</th>
-                <th>TIME</th>
+                <th>Người gửi</th>
+                <th>SĐT người nhận</th>
+                <th>Số tiền</th>
+                <th>Thời gian</th>
+
             </tr>
         </thead>
         <tbody>
@@ -65,11 +68,54 @@ while ($row = $result->fetch_assoc()) {
         <td><?php echo $row['RECEIVER_PHONE']; ?></td>
         <td><?php echo $row['AMOUNT']; ?></td>
         <td><?php echo $row['TIME']; ?></td>
+        
 
     </tr>
     <?php
 }
 $conn->close();
+$conn = connect_database();
+
+$sql1 = "Select * from  history where type ='recharge'";
+$result1 = $conn->query($sql1);
 ?>
+
+ </table>
+
+ <div class="container">
+        <h2 style="text-align: center">Recharge History</h2>
+
+       <br>
+       <div>
+    <table class = "table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Người nạp</th>
+                <th>Số tiền</th>
+                <th>Thời gian</th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+        <?php
+
+while ($row1 = $result1->fetch_assoc()) {
+    ?>
+    <tr>
+        <td><?php echo $row1['ID']; ?></td>
+        <td><?php echo $row1['USER_ID']; ?></td>
+        <td><?php echo $row1['AMOUNT']; ?></td>
+        <td><?php echo $row1['TIME']; ?></td>
+        
+
+    </tr>
+    <?php
+}
+        
+?>
+ </table>
+
  </body>
 </html>

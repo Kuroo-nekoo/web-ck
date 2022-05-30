@@ -1,37 +1,37 @@
-DROP DATABASE IF EXISTS QUANLYVIDIENTU;
+      DROP DATABASE IF EXISTS QUANLYVIDIENTU;
 
-CREATE DATABASE QUANLYVIDIENTU;
+      CREATE DATABASE QUANLYVIDIENTU;
 
-USE QUANLYVIDIENTU;
+      USE QUANLYVIDIENTU;
 
--- phpMyAdmin SQL Dump
--- version 5.0.4
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 24, 2022 at 07:21 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.1
+      -- phpMyAdmin SQL Dump
+      -- version 5.0.4
+      -- https://www.phpmyadmin.net/
+      --
+      -- Host: 127.0.0.1
+      -- Generation Time: May 24, 2022 at 07:21 AM
+      -- Server version: 10.4.17-MariaDB
+      -- PHP Version: 8.0.1
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+      SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+      START TRANSACTION;
+      SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+      /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+      /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+      /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+      /*!40101 SET NAMES utf8mb4 */;
 
---
--- Database: `quanlyvidientu`
---
+      --
+      -- Database: `quanlyvidientu`
+      --
 
--- --------------------------------------------------------
+      -- --------------------------------------------------------
 
---
--- Table structure for table `account`
---
+      --
+      -- Table structure for table `account`
+      --
 
 CREATE TABLE `account` (
   `USER_ID` int(11) NOT NULL,
@@ -82,20 +82,59 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-CREATE TABLE `history` (
-        `ID` int(11) not null PRIMARY KEY,
-        `USER_ID` int(11) not null,
-        `RECEIVER_USER_ID` int(11),
-        `RECEIVER_PHONE` varchar(20),
-        `AMOUNT`  float ,
-        `TIME` varchar(20) NOT NULL,
-        `IS_ALLOW` bit DEFAULT 1,
-        `CONTENT` nvarchar(50)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ CREATE TABLE `history` (
+              `ID` int(11)  PRIMARY KEY,
+              `USER_ID` int(11) not null,
+              `RECEIVER_USER_ID` int(11),
+              `RECEIVER_PHONE` varchar(20),
+              `AMOUNT`  int ,
+              `TIME` datetime NOT NULL,
+              `IS_ALLOW` bit DEFAULT 1,
+              `CONTENT` varchar(50),
+              `TYPE` varchar(20)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-ALTER TABLE `history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
-alter table `history`
-add CONSTRAINT `fk_history` FOREIGN key (`USER_ID`) REFERENCES `account`(`USER_ID`)
+      --
+
+      -- test user
+      INSERT INTO `account` (`USER_ID`, `PHONE_NUMBER`, `EMAIL`, `FULL_NAME`, `DATE_OF_BIRTH`, `ADDRESS`, `USERNAME`, `PASSWORD`, `IS_NEW_USER`, `ACTIVATED_STATE`, `FAIL_LOGIN_COUNT`, `ABNORMAL_LOGIN_COUNT`, `IS_LOCKED`, `DATE_LOCKED`, `DATE_CREATED`, `BALANCE`) VALUES
+      (1, '0907718480', 'bao@gmail.com', 'Lý Gia Bảo', '2022-05-02', 'Tp. Rạch Giá', '5472576450', '123456', b'0', 'chờ xác minh', 0, 0, b'0', NULL, '2025-05-22 01:26:35', 0),
+      (2, '25156456', 'phihung@gmail.com', 'Phi Hùng', '2022-05-11', 'TP HCM', '9766924239', 'ormowc', b'1', 'chờ xác minh', 0, 0, b'0', NULL, '2022-05-25 13:43:56', 0);
+
+      --
+      -- Indexes for dumped tables
+      --
+
+      --
+      -- Indexes for table `account`
+      --
+      ALTER TABLE `account`
+        ADD PRIMARY KEY (`USER_ID`);
+
+
+      --
+      ALTER TABLE `account`
+        MODIFY `USER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+      COMMIT;
+
+
+      /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+      /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+      /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+      ALTER TABLE `history`
+        MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+      alter table `history`
+      add CONSTRAINT `fk_history` FOREIGN key (`USER_ID`) REFERENCES `account`(`USER_ID`);
+
+      CREATE TABLE `credit` (
+              `credit_id` int(6) not null PRIMARY KEY,
+              `expiration_date` date not null,
+              `CVV` int(3)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;  
+
+      insert into `credit` (`credit_id`,`expiration_date`,`CVV`) values (111111,'2022/10/10',411), (222222,'2022/11/11',443),(333333,'2022/12/12',577);
+

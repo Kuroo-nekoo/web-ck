@@ -80,18 +80,18 @@ if (isset($_POST['email'])
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="./main.js"></script>
   </head>
   <body>
     <?php include_once './navbar.php'?>
+        <div class="text-danger h5">
+          <?php if (isset($error_message) && !empty($error_message)) {
+            echo $error_message;
+        }
+        ?></div>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4 border" method="POST" action="register.php" enctype="multipart/form-data">
-      <div class="text-danger h5">
-        <?php if (isset($error_message) && !empty($error_message)) {
-    echo $error_message;
-}
-?></div>
         <h1>Đăng ký tài khoản</h1>
         <div class="form-group">
           <label for="phone_number">Số điện thoại: </label>
@@ -131,30 +131,34 @@ if (isset($_POST['email'])
           <label for="address">Địa chỉ: </label>
           <input type="text" class="form-control" id="address" placeholder="Số nhà,tên đường,...." name="address">
         </div>
-        <div class="form-group">
-          <label for="frontsideimg">Ảnh mặt trước CMND: </label>
-          <input
-            type="file"
-            accept="image/*"
-            name="front_id_image"
-            id="front_id_image"
-            onchange="readURL(this, '#front');"
-          />
-          <img id="front" />
-        </div>
-        <div class="form-group">
-          <label for="back_id_image">Ảnh mặt sau CMND: </label>
-          <input
-            type="file"
-            accept="image/*"
-            name="back_id_image"
-            id="back_id_image"
-            onchange="readURL(this, '#back');"
+        <div class="form-group form-row">
+					<label class="col-md-4" for="frontsideimg">Ảnh mặt trước CMND: </label>
+					<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
+					<input
+						class="form-control-file"
+						type="file"
+						accept="image/*"
+						name="front_id_image"
+						id="front_id_image"
+						onchange="readURL(this, '#front','#front_id_image');"
+					/>
+					<img id="front" />
+				</div>
+				<div class="form-group form-row">
+					<label class="col-md-4" for="back_id_image">Ảnh mặt sau CMND: </label>
+					<button id='back_img' class="file-upload-btn col-md-2" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
+					<input
+						class="form-control-file"
+						type="file"
+						accept="image/*"
+						name="back_id_image"
+						id="back_id_image"
+						onchange="readURL(this, '#back', '#back_id_image');"
 
-          />
-          <img id="back"/>
-        </div>
-        <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
+					/>
+					<img id="back"/>
+				</div>
+        <button type="submit" class="btn btn-success">Đăng ký</button>
       </form>
     </div>
   </body>

@@ -10,10 +10,10 @@ $user_data = get_user_data($_GET['user_id'])['data'];
 $user_id = $user_data['USER_ID'];
 
 if (isset($_GET['is_accepted'])) {
-  if ($_GET['is_accepted'] == 1) {
-      $result = update_state($user_id,'đã xác minh');
-      header('Location: ./user_info.php?user_id=' . $user_id);
-  }
+    if ($_GET['is_accepted'] == 1) {
+        $result = update_state($user_id,'đã xác minh');
+        header('Location: ./user_info.php?user_id=' . $user_id);
+    }
 }
 
 if (isset($_GET['is_rejected'])) {
@@ -21,7 +21,21 @@ if (isset($_GET['is_rejected'])) {
         $result = update_state($user_id,'vô hiệu hóa');
         header('Location: ./user_info.php?user_id=' . $user_id);
     }
-  }
+}
+
+if (isset($_GET['is_added'])) {
+    if ($_GET['is_added'] == 1) {
+        $result = update_state($user_id,'chờ cập nhật');
+        header('Location: ./user_info.php?user_id=' . $user_id);
+    }
+}
+
+if (isset($_GET['is_unlock'])) {
+    if ($_GET['is_unlock'] == 1) {
+        $result = unlock($user_id);
+        header('Location: ./user_info.php?user_id=' . $user_id);
+    }
+}
 
 ?>
 
@@ -46,7 +60,7 @@ if (isset($_GET['is_rejected'])) {
 <?php include './navbar_admin.php'?>
     <div class="container">
         <div class="row">
-            <div class="col-md-6 mr-auto">
+            <div class="col-md-9 mr-auto">
             <h3>Thông tin người dùng</h3>
             <form>
                 <div class="form-group form-row">
@@ -83,32 +97,36 @@ if (isset($_GET['is_rejected'])) {
                                 $bg_color = 'form-control col-md-8 bg-danger text-white';  
                             else:
                                 $bg_color = 'form-control col-md-8 bg-secondary text-white';
-                    endif;
-                        ?>
+                    endif;?>
                     <input class= '<?php echo $bg_color?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" disabled/>
                 </div>
-                <?php if($user_data['ACTIVATED_STATE'] == 'chờ xác minh'):?>
+                <div class="form-group form-row">
+					<label class="col-md-3" for="cmnd">CMND</label>
+					<div class="col-md-4" id="img-1"> 
+						<img class="id-card" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
+					</div>
+					<div class="col-md-4" id="img-2"> 
+						<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
+					</div>
+				</div>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="permission">Quyền:</label>
-                    <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
-                        Xác minh
+                    <button type="button" class="btn btn-primary mr-2" onclick='rejected(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
+                            Vô hiệu
                     </button>
-                    <button type="button" class="btn btn-primary mr-2" onclick='disable(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
-                        Hủy
-                    </button>
-                    <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal">
-                        Bổ sung thông tin
-                    </button>
-                </div>
-                <?php endif;?>
-                <?php if($user_data['IS_LOCKED'] == 1):?>
-                <div class="form-group form-row">
-                    <label class="col-md-3" for="permission">Quyền:</label>
-                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">
+                    <?php if($user_data['ACTIVATED_STATE'] == 'chờ xác minh'):?>
+                        <button type="button" class="btn btn-primary mr-2" onclick='verification(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
+                            Xác minh
+                        </button>
+                        <button type="button" class="btn btn-primary ml-2" onclick='additional(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
+                            Bổ sung thông tin
+                        </button>
+                    <?php elseif($user_data['IS_LOCKED'] == 1): ?>
+                    <button type="button" class="btn btn-primary mr-2" onclick='unlock(<?php echo $user_id ?>)' data-toggle="modal" data-target="#modal">
                         Mở khóa
                     </button>
+                    <?php endif;?>
                 </div>
-                <?php endif;?>
 		    </form>
 	        </div>
         </div>
