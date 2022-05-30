@@ -26,6 +26,6 @@ echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <li class="nav-item">
     <a class="nav-link" href="./logout.php"> Logout </a>
   </li>
-  </ul>A
+  </ul>
 </div>
 </nav>';

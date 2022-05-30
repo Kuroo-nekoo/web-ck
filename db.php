@@ -72,7 +72,7 @@ function login($username, $password)
 
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
-    if ($data['IS_LOCKED'] === 1) {
+    if (isset($data['IS_LOCKED']) && $data['IS_LOCKED'] === 1) {
         return array('code' => 1, 'error' => 'Tài khoản đã bị khóa', 'is_locked' => 1);
     } else if ($result->num_rows === 0) {
         return array('code' => 1, 'error' => 'Sai tên đăng nhập');
@@ -90,7 +90,7 @@ function login($username, $password)
         }
 
         if ($fail_login_count === 3) {
-            if ($data['ABNORMAL_LOGIN_COUNT'] === 0) {
+            if ($data['ABNORMAL_LOGIN_COUNT'] === 0 && $data['IS_LOCKED'] === 0) {
                 $abnormal_login_count = 1;
                 $fail_login_count = 0;
                 date_default_timezone_set('asia/ho_chi_minh'); // set timezone
@@ -104,7 +104,7 @@ function login($username, $password)
                 }
 
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa tạm thời', 'abnormal_login_count' => $abnormal_login_count);
-            } else if ($data['ABNORMAL_LOGIN_COUNT'] === 1) {
+            } else if ($data['ABNORMAL_LOGIN_COUNT'] === 1 && $data['IS_LOCKED'] === 0) {
                 $is_locked = 1;
                 $fail_login_count = 0;
                 $abnormal_login_count = 0;
@@ -289,7 +289,8 @@ function update_id_image($user_id, $front_id_image_dir, $back_id_image_dir)
     }
     return array('code' => 0);
 }
-function unlock($user_id) {
+function unlock($user_id)
+{
     $conn = connect_database();
     $sql = "UPDATE ACCOUNT SET ACTIVATED_STATE = 'đã xác minh', IS_LOCKED = 0, DATE_LOCKED = NULL, FAIL_LOGIN_COUNT = 0, ABNORMAL_LOGIN_COUNT = 0  WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
@@ -302,7 +303,8 @@ function unlock($user_id) {
     return array('code' => 0);
 }
 
-function update_id_card ($user_id, $front_id_image_dir, $back_id_image_dir) {
+function update_id_card($user_id, $front_id_image_dir, $back_id_image_dir)
+{
     $conn = connect_database();
     $sql = "UPDATE ACCOUNT SET FRONT_ID_IMAGE_DIR = '{$front_id_image_dir}', BACK_ID_IMAGE_DIR = '{$back_id_image_dir}' WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);

@@ -3,7 +3,7 @@ require_once './common.php';
 require_once './db.php';
 
 session_start();
-if(isset($_SESSION['user_id'])) {}
+if (isset($_SESSION['user_id'])) {}
 $user_id = $_SESSION['user_id'];
 
 if (!isset($_SESSION['user_id'])) {
@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
     $user_data = get_user_data($user_id)['data'];
 }
 
-if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
+if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image']) && isset($_FILES['update_id_image'])
     && !empty($_FILES['front_id_image']) && !empty($_FILES['back_id_image'])) {
     $tmp_name = $_FILES['front_id_image']['tmp_name'];
     $name = basename($_FILES['front_id_image']['name']);
@@ -80,14 +80,6 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 				<label class="col-md-3" for="is_active">Trạng thái:</label>
 				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" />
 			</div>
-			<div class="form-group form-row">
-				<label class="col-md-3" for="is_active">CMND</label>
-				<div class="id-card col-md-5" id="img-1">
-					<img src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
-				</div>
-				<div class="id-card col-md-5" id="img-2">
-					<img src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau	 cmnd">
-				</div>
 				<div class="form-group form-row">
 					<label class="col-md-3" for="phone_number">Số điện thoại:</label>
 					<input class="form-control col-md-8" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" readonly/>
@@ -100,32 +92,32 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 					<label class="col-md-3" for="address">Địa chỉ:</label>
 					<input class="form-control col-md-8" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
 				</div>
-				<?php 
-				if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
-					$bg_color = 'form-control col-md-8 bg-warning text-dark'; 
-					elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
-						$bg_color = 'form-control col-md-8 bg-danger text-white';  
-					else:
-						$bg_color = 'form-control col-md-8 bg-secondary text-white';
-				endif;
-				if($user_data['ACTIVATED_STATE'] != 'đã xác minh'):?>
+				<?php
+if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
+    $bg_color = 'form-control col-md-8 bg-warning text-dark';
+elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
+    $bg_color = 'form-control col-md-8 bg-danger text-white';
+else:
+    $bg_color = 'form-control col-md-8 bg-secondary text-white';
+endif;
+if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
 				<div class="form-group form-row">
 					<label class="col-md-3" for="is_active">Trạng thái:</label>
-					<input class= '<?php echo $bg_color?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
+					<input class= '<?php echo $bg_color ?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
 				</div>
 				<?php endif;?>
 
-				<?php if($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'):?>
-				<div class="form-group form-row">
-					<label class="col-md-3" for="cmnd">CMND</label>
-					<div class="col-md-4" id="img-1"> 
+				<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
+					<span class="col-md-3" for="cmnd">CMND:</span>
+					<div class="col-md-4" id="img-1">
+						<span>Mặt trước chứng minh</span>
 						<img class="id-card" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
 					</div>
-					<div class="col-md-4" id="img-2"> 
+					<div class="col-md-4" id="img-2">
+						<span>Mặt sau chứng minh</span>
 						<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
 					</div>
-				</div>
-				<?php else:?>
+				<?php else: ?>
 					<div class="form-group form-row">
 						<label class="col-md-3" for="frontsideimg">Ảnh mặt trước CMND: </label>
 						<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
@@ -155,42 +147,11 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 					</div>
 				<?php endif;?>
 				<div class="d-flex">
-					<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" >Cập nhật</button>
+					<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" name="update_id_image" >Cập nhật</button>
 					<a href="./change_password.php"><button class="btn btn-success mr-3">Đổi mật khẩu</button></a>
 				</div>
-			</form>
 			</div>
 		</form>
-		<?php if ($user_data['ACTIVATED_STATE'] === 'chờ cập nhật') {?>
-		<form method="POST" action="user.php" enctype="multipart/form-data">
-			<div class="form-group">
-			<label for="frontsideimg">Ảnh mặt trước CMND: </label>
-			<input
-				type="file"
-				accept="image/*"
-				name="front_id_image"
-				id="front_id_image"
-				onchange="readURL(this, '#front');"
-			/>
-			<img id="front" />
-			</div>
-			<div class="form-group">
-			<label for="back_id_image">Ảnh mặt sau CMND: </label>
-			<input
-				type="file"
-				accept="image/*"
-				name="back_id_image"
-				id="back_id_image"
-				onchange="readURL(this, '#back');"
-
-			/>
-			<img id="back"/>
-			</div>
-			<button type="submit"></button>
-		</form>
-		<?php }?>
-		<a href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
-
 		</div>
 	</div>
 </body>

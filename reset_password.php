@@ -1,27 +1,34 @@
 <?php
 require_once './db.php';
 require_once './common.php';
+require_once './email.php';
 session_start();
-print_r($_SESSION);
 
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
 }
 
-if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] < 60)) {
-    echo time() - $_SESSION['otp']['started'];
-    if (isset($_POST['otp'])) {
+if (isset($_POST['resend_otp'])) {
+    $otp = $_SESSION['otp'];
+    $subject = "OTP";
+    $body = "Mã OTP của bạn là: " . $otp['otp'];
+    $email_phone_number = $otp['email_phone_number'];
+    send_email($subject, $body, $email_phone_number);
+}
 
+if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] < 60)) {
+    if (isset($_POST['otp']) && $_POST['otp'] !== '') {
         $otp = $_SESSION['otp']['otp'];
-        echo $otp;
-        echo $_POST['otp'];
         if ($_POST['otp'] === $otp) {
             unset($_SESSION['otp']);
             header('Location: change_password_first_time.php');
+        } else {
+            $error_message = "Mã xác nhận không đúng";
         }
     }
 } else {
+    unset($_SESSION['otp']);
     header('Location: forgot_password.php');
 }
 ?>
@@ -57,6 +64,9 @@ if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] 
   </head>
   <body>
     <?php include './navbar.php'?>
+    <?php if (isset($error_message)) {?>
+      <div class="alert alert-danger"><?php echo $error_message ?></div>
+    <?php }?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-4" action="reset_password.php" method="POST">
         <h1>Nhập mã OTP</h1>
@@ -70,9 +80,10 @@ if (isset($_SESSION['otp']['started']) && (time() - $_SESSION['otp']['started'] 
             name="otp"
           />
         </div>
-        <button type="submit" class="btn btn-success btn-block mb-3">
+        <button type="submit" class="btn btn-success btn-block mb-3" name="confirm">
 			Xác nhận
         </button>
+        <button type="submit" class="btn btn-success btn-block" name="resend_otp">Gửi lại mã otp</button>
       </form>
     </div>
   </body>

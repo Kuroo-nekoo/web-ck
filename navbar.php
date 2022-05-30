@@ -9,8 +9,6 @@ echo '<nav class="mb-3 navbar navbar-expand-lg navbar-light bg-light">
           <li class="nav-item">
             <a class="nav-link" href="/register.php">Đăng ký</a>
           </li>
-
-
         </ul>
       </div>
     </nav>';
