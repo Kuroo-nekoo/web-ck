@@ -9,8 +9,6 @@ if (isset($_SESSION['is_new_user'])) {
     check_new_user($is_new_user);
 }
 
-print_r($_FILES);
-
 if (isset($_POST['email'])
     && isset($_POST['phone_number'])
     && isset($_POST['full_name'])
@@ -87,12 +85,12 @@ if (isset($_POST['email'])
     <?php include_once './navbar.php'?>
         <div class="text-danger h5">
           <?php if (isset($error_message) && !empty($error_message)) {
-            echo $error_message;
-        }
-        ?></div>
+    echo $error_message;
+}
+?></div>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-md-4 border" method="POST" action="register.php" enctype="multipart/form-data">
-        <h1>Đăng ký tài khoản</h1>
+      <form class="col-md-4 border p-2" method="POST" action="register.php" enctype="multipart/form-data" >
+        <h1 class="text-center">Đăng ký tài khoản</h1>
         <div class="form-group">
           <label for="phone_number">Số điện thoại: </label>
           <input
@@ -133,7 +131,7 @@ if (isset($_POST['email'])
         </div>
         <div class="form-group form-row">
 					<label class="col-md-4" for="frontsideimg">Ảnh mặt trước CMND: </label>
-					<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
+					<button id='front_img' class="file-upload-btn col-md-3" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
 					<input
 						class="form-control-file"
 						type="file"
@@ -146,7 +144,7 @@ if (isset($_POST['email'])
 				</div>
 				<div class="form-group form-row">
 					<label class="col-md-4" for="back_id_image">Ảnh mặt sau CMND: </label>
-					<button id='back_img' class="file-upload-btn col-md-2" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
+					<button id='back_img' class="file-upload-btn col-md-3" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
 					<input
 						class="form-control-file"
 						type="file"
@@ -158,7 +156,7 @@ if (isset($_POST['email'])
 					/>
 					<img id="back"/>
 				</div>
-        <button type="submit" class="btn btn-success">Đăng ký</button>
+        <button type="submit" class="btn btn-success btn-block">Đăng ký</button>
       </form>
     </div>
   </body>

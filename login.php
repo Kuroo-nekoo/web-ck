@@ -3,10 +3,13 @@ require_once './db.php';
 require_once './common.php';
 
 session_start();
-if (isset($_SESSION['is_admin']))  
-      header('Location: ./admin.php');
-if (isset($_SESSION['user_id']))  
+if (isset($_SESSION['is_admin'])) {
+    header('Location: ./admin.php');
+}
+
+if (isset($_SESSION['user_id'])) {
     header('Location: ./user.php');
+}
 
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
@@ -94,9 +97,9 @@ if (isset($_SESSION['temp_lock_time'])) {
     ></script>
     <link rel="stylesheet" href="./style.css" />
   </head>
-  <body>
+  <body >
     <?php include './navbar.php'?>
-    <div class="d-flex justify-content-center align-items-center">
+    <div class="d-flex justify-content-center align-items-center h-100 relative">
       <?php if (isset($is_locked) && $is_locked === 1) {?>
         <div class="alert alert-danger" role="alert">
           <?php echo $error_message ?>
@@ -104,7 +107,7 @@ if (isset($_SESSION['temp_lock_time'])) {
       <?php } else if (isset($is_temp_locked) && $is_temp_locked === 1) {?>
         <div class="alert alert-danger"><?php echo $error_message ?></div>
         <?php } else {?>
-      <form class="col-4 border" action="login.php" method="POST" >
+      <form class="col-4 border " action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>
         <div class="text-danger h-6">
           <?php
@@ -136,7 +139,8 @@ if (isset($error_message) && strlen($error_message) !== 0) {
         <button type="submit" class="btn btn-success btn-block mb-3">
           Đăng nhập
         </button>
-        <div class="text-right"><a href="./forgot_password.php">For got password</a></div>
+        <div class="text-right">Chưa có tài khoản đăng ký <a href="./register.php">tại đây</a></div>
+        <div class="text-right"><a href="./forgot_password.php">Quên mật khẩu</a></div>
       </form>
       <?php }?>
     </div>
