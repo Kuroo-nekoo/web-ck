@@ -16,43 +16,41 @@ if (isset($_POST['username']) && $_POST['password']) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if($_POST['username'] == 'admin' && $_POST['password'] == '123456')
-    {
-      $_SESSION['is_admin'] = true;
-      header( 'Location: admin.php' );
-    }
-    else {
-      if (strlen($username) !== 10) {
-        $error_message = "Vui lòng nhập đúng định dạng của tên đăng nhập";
-      } else if (strlen($password) < 6) {
-          $error_message = "Vui lòng nhập mật khẩu có độ dài ít nhất 6 ký tự";
-      } else {
-          $data = login($username, $password);
+    if ($_POST['username'] == 'admin' && $_POST['password'] == '123456') {
+        $_SESSION['is_admin'] = true;
+        header('Location: admin.php');
+    } else {
+        if (strlen($username) !== 10) {
+            $error_message = "Vui lòng nhập đúng định dạng của tên đăng nhập";
+        } else if (strlen($password) < 6) {
+            $error_message = "Vui lòng nhập mật khẩu có độ dài ít nhất 6 ký tự";
+        } else {
+            $data = login($username, $password);
 
-        if (isset($data['is_locked']) && $data['is_locked'] === 1) {
-            $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
-            $is_locked = 1;
-        } else if ($data['code'] === 0) {
-            $is_new_user = $data['data']['IS_NEW_USER'];
-            unset($_SESSION['user_id']);
-            unset($_SESSION['is_new_user']);
-            $_SESSION['user_id'] = $data['data']['USER_ID'];
-            $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
-            if ($is_new_user === 1) {
-                header('Location: change_password_first_time.php');
-            }
-            else {
-              header('location: user.php');
-            }
-        } else if ($data['code'] === 1) {
-            if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
-                $_SESSION['temp_lock_time'] = time();
+            if (isset($data['is_locked']) && $data['is_locked'] === 1) {
+                $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
+                $is_locked = 1;
+            } else if ($data['code'] === 0) {
+                $is_new_user = $data['data']['IS_NEW_USER'];
+                unset($_SESSION['user_id']);
+                unset($_SESSION['is_new_user']);
+                $_SESSION['user_id'] = $data['data']['USER_ID'];
+                $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
+                if ($is_new_user === 1) {
+                    header('Location: change_password_first_time.php');
+                } else {
+                    header('location: user.php');
+                }
+            } else if ($data['code'] === 1) {
+                if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
+                    $_SESSION['temp_lock_time'] = time();
+                }
+            } else if ($data['activated_state'] === 'chờ cập nhật') {
+                header('Location: update_id_image.php');
             }
         }
-      }
     }
-    
-      
+
 }
 
 if (isset($_SESSION['temp_lock_time'])) {

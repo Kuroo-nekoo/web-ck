@@ -17,7 +17,14 @@ if (isset($_POST['email'])
     && isset($_POST['date_of_birth'])
     && isset($_POST['address'])
     && isset($_FILES['front_id_image'])
-    && isset($_FILES['back_id_image'])) {
+    && isset($_FILES['back_id_image'])
+    && !empty($_POST['email'])
+    && !empty($_POST['phone_number'])
+    && !empty($_POST['full_name'])
+    && !empty($_POST['date_of_birth'])
+    && !empty($_POST['address'])
+    && !empty($_FILES['front_id_image'])
+    && !empty($_FILES['back_id_image'])) {
     $email = $_POST['email'];
     $phone_number = $_POST['phone_number'];
     $full_name = $_POST['full_name'];

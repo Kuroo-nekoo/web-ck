@@ -3,9 +3,12 @@ require_once './common.php';
 require_once './db.php';
 
 session_start();
+if(isset($_SESSION['user_id'])) {}
+$user_id = $_SESSION['user_id'];
 
-if (!isset($_SESSION['user_id']))  
-  header('Location: ./login.php');
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ./login.php');
+}
 
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
@@ -15,6 +18,21 @@ if (isset($_SESSION['is_new_user'])) {
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     $user_data = get_user_data($user_id)['data'];
+}
+
+if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
+    && !empty($_FILES['front_id_image']) && !empty($_FILES['back_id_image'])) {
+    $tmp_name = $_FILES['front_id_image']['tmp_name'];
+    $name = basename($_FILES['front_id_image']['name']);
+    move_uploaded_file($tmp_name, './uploads/' . $name);
+    $front_id_image_dir = './uploads/' . $name;
+
+    $tmp_name = $_FILES['back_id_image']['tmp_name'];
+    $name = basename($_FILES['back_id_image']['name']);
+    move_uploaded_file($tmp_name, './uploads/' . $name);
+    $back_id_image_dir = './uploads/' . $name;
+
+    update_id_image($user_id, $front_id_image_dir, $back_id_image_dir);
 }
 ?>
 
@@ -63,14 +81,42 @@ if (isset($_SESSION['user_id'])) {
 			</div>
 			<div class="form-group form-row">
 				<label class="col-md-3" for="is_active">CMND</label>
-				<div class="id-card col-md-5" id="img-1"> 
+				<div class="id-card col-md-5" id="img-1">
 					<img src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
 				</div>
-				<div class="id-card col-md-5" id="img-2"> 
+				<div class="id-card col-md-5" id="img-2">
 					<img src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau	 cmnd">
 				</div>
 			</div>
 		</form>
+		<?php if ($user_data['ACTIVATED_STATE'] === 'chờ cập nhật') {?>
+		<form method="POST" action="user.php" enctype="multipart/form-data">
+			<div class="form-group">
+			<label for="frontsideimg">Ảnh mặt trước CMND: </label>
+			<input
+				type="file"
+				accept="image/*"
+				name="front_id_image"
+				id="front_id_image"
+				onchange="readURL(this, '#front');"
+			/>
+			<img id="front" />
+			</div>
+			<div class="form-group">
+			<label for="back_id_image">Ảnh mặt sau CMND: </label>
+			<input
+				type="file"
+				accept="image/*"
+				name="back_id_image"
+				id="back_id_image"
+				onchange="readURL(this, '#back');"
+
+			/>
+			<img id="back"/>
+			</div>
+			<button type="submit"></button>
+		</form>
+		<?php }?>
 		<a href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
 	</div>
 </body>

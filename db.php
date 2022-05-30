@@ -120,6 +120,11 @@ function login($username, $password)
                 return array('code' => 1, 'error' => 'Tài khoản đã bị khóa vĩnh viễn', 'is_locked' => $is_locked);
             }
         }
+
+        $activated_state = $data['ACTIVATED_STATE'];
+        if ($activated_state === "chờ cập nhật") {
+            return array('code' => 1, 'error' => 'Tài khoản chưa cần cập nhật căn cước công dân', 'activated_state' => $activated_state);
+        }
         return array('code' => 1, 'error' => 'Sai mật khẩu');
     } else {
         $sql = "UPDATE ACCOUNT SET FAIL_LOGIN_COUNT = 0, ABNORMAL_LOGIN_COUNT = 0 WHERE USERNAME = ?";
@@ -258,7 +263,8 @@ function get_users_data_sort_date($type)
     return array('code' => 1, 'error' => 'Empty data');
 }
 
-function update_state($user_id, $state) {
+function update_state($user_id, $state)
+{
     $conn = connect_database();
     $sql = "UPDATE ACCOUNT SET ACTIVATED_STATE = '{$state}'  WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
@@ -268,5 +274,18 @@ function update_state($user_id, $state) {
     }
 
     $stm->execute();
+    return array('code' => 0);
+}
+
+function update_id_image($user_id, $front_id_image_dir, $back_id_image_dir)
+{
+    $conn = connect_database();
+    $sql = "UPDATE ACCOUNT SET FRONT_ID_IMAGE_DIR = ?, BACK_ID_IMAGE_DIR = ? WHERE USER_ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('sss', $front_id_image_dir, $back_id_image_dir, $user_id);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
     return array('code' => 0);
 }
