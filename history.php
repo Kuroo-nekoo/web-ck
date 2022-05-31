@@ -45,7 +45,7 @@ $result = $conn->query($sql);
     <script src="./main.js"></script>
   </head>
   <body>
-  <?php require_once 'navbar_admin.php'?>
+  <?php require_once 'navbar_user.php'?>
   <?php if (isset($error_message) && $error_message !== "") {?>
     <div class="alert alert-danger"><?php echo $error_message ?></div>
   <?php } else {?>

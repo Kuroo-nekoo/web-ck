@@ -24,6 +24,11 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
   $users_sort_date_locked = [];
 }
 
+if (get_users_not_activated()['code'] == 0) {
+  $users_not_activated = get_users_not_activated()['data'];
+} else {
+  $users_not_activated = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,9 +56,9 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
           <h1>Chào mừng admin</h1>
         </div>
       <?php elseif ($_GET['require'] == 'chuaxacthuc'): ?>
-          <h3 class="">Danh sách tài khoản chưa xác thực</h3>
-
-          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+        
+        <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar main">
+            <h3 class="">Danh sách tài khoản chưa xác thực</h3>
             <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
@@ -66,8 +71,8 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
                 </tr>
               </thead>
               <tbody>
-                <?php if ($users): ?>
-                <?php foreach ($users as $user):
+                <?php if ($users_not_activated): ?>
+                <?php foreach ($users_not_activated as $user):
           if ($user['ACTIVATED_STATE'] === 'chờ xác minh'):
             $user_id = $user['USER_ID'];
           ?>
@@ -88,9 +93,9 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
           </div>
           <?php elseif ($_GET['require'] == 'daxacthuc'): 
             ?>
-          <h3 class="mt-3">Danh sách tài khoản đã xác thực</h3>
 
-          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+<div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar main">
+            <h3 class="mt-3">Danh sách tài khoản đã xác thực</h3>
             <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
@@ -128,9 +133,9 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
           </div>
           <?php elseif ($_GET['require'] == 'vohieuhoa'): ?>
           
-          <h3 class="mt-3">Danh sách tài khoản bị vô hiệu hóa</h3>
-
-          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar main">
+            <h3 class="mt-3">Danh sách tài khoản bị vô hiệu hóa</h3>
             <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>
@@ -169,9 +174,9 @@ if (get_users_data_sort_date('sort_date_locked')['code'] == 0) {
           </div>
           <?php elseif ($_GET['require'] == 'dabikhoa'): ?>
 
-          <h3 class="mt-3">Danh sách tài khoản bị khóa</h3>
-
-          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar main">
+            <h3 class="mt-3">Danh sách tài khoản bị khóa</h3>
             <table class="table table-bordered table-striped mb-0 table-hover">
               <thead>
                 <tr>

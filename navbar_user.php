@@ -16,7 +16,6 @@ echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
         Chức năng
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="/user.php?require=demo">demo</a>
         <a class="dropdown-item" href="/transaction.php">Chuyển tiền</a>
         <a class="dropdown-item" href="/recharge.php">Nạp tiền</a>
         <a class="dropdown-item" href="/withdraw.php">Rút tiền</a>

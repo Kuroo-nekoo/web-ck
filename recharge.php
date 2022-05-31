@@ -175,6 +175,8 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="./style.css">
+    <script type="" src="./main.js"></script>
   </head>
   <body>
     <?php include_once './navbar_user.php'?>
@@ -182,11 +184,11 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
       <div class="alert alert-danger"><?php echo $error_message ?></div>
       <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
-      <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post" >
+      <form name="rechargeForm" class="col-md-4 border main" action="recharge.php" method="post" >
       <div class="text-danger h5">
        </div>
-        <h1>Nạp tiền </h1>
-        <div class="form-group">
+       <div class="form-group">
+          <h1>Nạp tiền </h1>
           <label for="credit_id">Số thẻ tín dụng: </label>
           <input
             id="credit_id"

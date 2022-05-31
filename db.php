@@ -41,7 +41,7 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address, $
         $password = $password . chr(rand(0, 25) + 97);
     }
 
-    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_LOCKED, DATE_CREATED, BALANCE, FRONT_ID_IMAGE_DIR, BACK_ID_IMAGE_DIR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO ACCOUNT (PHONE_NUMBER, EMAIL, FULL_NAME, DATE_OF_BIRTH, ADDRESS, USERNAME, PASSWORD, IS_NEW_USER, ACTIVATED_STATE, FAIL_LOGIN_COUNT, ABNORMAL_LOGIN_COUNT, IS_LOCKED, DATE_LOCKED, DATE_CREATED, DATE_UPDATE, BALANCE, FRONT_ID_IMAGE_DIR, BACK_ID_IMAGE_DIR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stm = $conn->prepare($sql);
     $is_new_user = 1;
     $activated_state = "chờ xác minh";
@@ -51,8 +51,9 @@ function register($phone_number, $email, $full_name, $date_of_birth, $address, $
     date_default_timezone_set('asia/ho_chi_minh'); //set timezone
     $date_created = date('y-m-d G:i:s'); // get current date
     $date_locked = null;
+    $date_update = date('y-m-d G:i:s');
     $balance = 0;
-    $stm->bind_param('sssssssisiiississ', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $balance, $front_id_image_dir, $back_id_image_dir);
+    $stm->bind_param('sssssssisiiisssiss', $phone_number, $email, $full_name, $date_of_birth, $address, $username, $password, $is_new_user, $activated_state, $fail_login_count, $abnormal_login_count, $is_locked, $date_locked, $date_created, $date_update, $balance, $front_id_image_dir, $back_id_image_dir);
     if (!$stm->execute()) {
         return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
     }
@@ -309,13 +310,31 @@ function get_list_history_sort_date()
 
 function sort_date_created($a, $b)
 {
-    return strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
+    return strtotime($a['DATE_CREATED']) - strtotime($b['DATE_CREATED']);
 }
+
 
 function sort_date_locked($a, $b)
 {
-    return strtotime($b['DATE_LOCKED']) - strtotime($a['DATE_LOCKED']);
+    return strtotime($a['DATE_LOCKED']) - strtotime($b['DATE_LOCKED']);
 }
+
+function sort_date_update($a, $b)
+{
+    return strtotime($b['DATE_UPDATE']) - strtotime($a['DATE_UPDATE']);
+}
+
+function get_users_not_activated() {
+    if (get_users_data_sort_date('sort_date_created')['code'] == 0) {
+        $result = get_users_data_sort_date('sort_date_created')['data'];
+        usort($result, 'sort_date_update');
+        return array('code' => 0, 'data' => $result);
+    }
+    return array('code' => 1, 'error' => 'Empty data');
+
+
+}
+
 
 function get_users_data_sort_date($type)
 {

@@ -7,7 +7,10 @@ require_once "./common.php";
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
   }
-
+  $activated_state = $_SESSION['activated_state'];
+  if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
+    $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
+}
   $conn = connect_database();
   if (!$_SESSION['user_id']) {
     header('Location: login.php');
@@ -138,7 +141,7 @@ require_once "./common.php";
     />
     <script
       src="http://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity=s"sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
       crossorigin="anonymous"
     ></script>
     <script
@@ -151,15 +154,21 @@ require_once "./common.php";
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="./style.css">
+    <script type="" src="./main.js"></script>
   </head>
   <body>
-    <?php include_once './navbar.php'?>
+    
+    <?php include_once './navbar_user.php'?>
+    <?php if (isset($error_message) && $error_message !== "") {?>
+      <div class="alert alert-danger"><?php echo $error_message ?> </div>
+    <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
-      <form name="rechargeForm" class="col-md-4 border" action="withdraw.php" method="post"  ">
+      <form name="rechargeForm" class="col-md-4 border main" action="withdraw.php" method="post"  >
       <div class="text-danger h5">
        </div>
-        <h1>Rút tiền </h1>
-        <div class="form-group">
+       <div class="form-group">
+          <h1>Rút tiền </h1>
           <label for="credit_id">Số thẻ tín dụng: </label>
           <input
             id="credit_id"
@@ -202,5 +211,6 @@ require_once "./common.php";
         <button type="submit" class="btn btn-success btn-block" name="contact_action" >Xác nhận nạp thẻ</button>
       </form>
     </div>
+    <?php }?>
   </body>
 </html>

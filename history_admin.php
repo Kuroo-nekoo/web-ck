@@ -46,15 +46,16 @@ if (get_list_history_sort_date('sort_date_locked')['code'] == 0) {
     <?php include './navbar_admin.php'?>
     <div class="container">
         <div class="row">
-            <h3 class="">Danh sách các giao dịch cần duyệt</h3>
-
-            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar main">
+                <h3 class="">Danh sách các giao dịch cần duyệt</h3>
                 <table class="table table-bordered table-striped mb-0 table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Số tiền</th>
                             <th>Thời gian</th>
+                            <th>Loại giao dịch</th>
                             <th>Trạng thái</th>
                         </tr>
                     </thead>
@@ -65,6 +66,7 @@ if (get_list_history_sort_date('sort_date_locked')['code'] == 0) {
                                 <td><?php echo $history['ID'] ?></td>
                                 <td id='money'> <?php echo $history['AMOUNT']?></td>
                                 <td><?php echo $history['TIME'] ?></td>
+                                <td><?php echo $history['TYPE'] ?></td>
                                 <td class='bg-warning text-dark'>chưa xử lí</td>
                             </tr>
                         <?php endif; endforeach; ?>
