@@ -44,8 +44,8 @@ if (isset($_GET['is_browsed'])) {
     <div class="container">
         <div class="row">
             <div class="col-md-9 mr-auto">
-            <h3>Chi tiết giao dịch</h3>
-            <form>
+                <form class ="main">
+                <h3>Chi tiết giao dịch</h3>
                 <div class="form-group form-row">
                     <label for="id" class="col-md-3">ID:</label>
                     <input class="form-control col-md-8"  type="text" value="<?php echo $history_data['ID']; ?> " disabled/>
@@ -60,7 +60,7 @@ if (isset($_GET['is_browsed'])) {
                 </div>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="amount">Số tiền chuyển:</label>
-                    <input class="form-control col-md-8" type="text" value="<?php echo $history_data['AMOUNT']; ?>" disabled/>
+                    <input class="form-control col-md-8 money" type="text" value="<?php echo $history_data['AMOUNT']; ?>" disabled/>
                 </div>
                 <div class="form-group form-row">
                     <label class="col-md-3" for="time">Thời gian:</label>

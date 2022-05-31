@@ -50,49 +50,37 @@ if (isset($_POST['is_confirmed'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="./style.css">
     <script type="" src="./main.js"></script>
   </head>
   <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-<a class="navbar-brand" href="./home.php">Home</a>
-<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-  <span class="navbar-toggler-icon"></span>
-</button>
-
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
-  <ul class="navbar-nav mr-auto">
-    <li  class="nav-item active">
-    <a class="nav-link" href="/user.php">Thông tin người dùng</a>
-  </li>
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Chức năng
-      </a>
-      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item" href="/transaction.php">Chuyển tiền</a>
-        <a class="dropdown-item" href="/recharge.php">Nạp tiền</a>
-        <a class="dropdown-item" href="/withdraw.php">Rút tiền</a>
-        <a class="dropdown-item" href="/history.php">Lịch sử giao dịch</a>
-        <a >
-    </li>
-    <li class="nav-item">
-    <a class="nav-link" href="./logout.php"> Logout </a>
-  </li>
-  </ul>
-</div>
-</div>
-</nav>
-
-    <?php if (isset($error_message) && $error_message !== "") {?>
+    <?php include_once './navbar_user.php'?>
+    <?php if (isset($error_message) && $error_message !== ""): ?>
       <div class="alert alert-danger"><?php echo $error_message ?> </div>
-    <?php } else {?>
+    <?php endif;?>
     <div class="d-flex justify-content-center align-items-center">
-      <form id='myForm' class="col-md-4 border main" action="./transaction.php" method="POST">
+      <form id='myForm' class="col-md-4 border main">
           <h1 class='ml-5'>Chuyển tiền</h1>
           <div class="form-group">
             <label for="phone_number">Số điện thoại người nhận: </label>
@@ -107,12 +95,12 @@ if (isset($_POST['is_confirmed'])) {
           </div>
           <div class="form-group">
             <label for="money">Số tiền (VNĐ): </label>
-            <input
+            <input 
               class="form-control"
-              type="text"
+              type="text" 
               id="money"
-              name="money"
-              data-type="currency"
+              name="money" 
+              data-type="currency" 
               placeholder="Số tiền"
               require>
           </div>
@@ -138,7 +126,7 @@ if (isset($_POST['is_confirmed'])) {
             <button id='submit_form' type="submit" class="btn btn-primary mr-2">Chuyển</button>
             <!-- <button id='modal_form' type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">Chuyển</button> -->
           </div>
-
+          
       </form>
     </div>
 
@@ -155,21 +143,21 @@ if (isset($_POST['is_confirmed'])) {
                     <div class="container">
                       <div class="row">
                         <div class="col-md-6">
-                          <p>Số tiền: <span class='money'><?php echo intval($money) * 1000 ?></span></p>
-                        </div>
+                          <p>Số tiền: <span class='money'><?php echo intval($money)*1000?></span></p>
+                        </div>  
                         <div class="col-md-6">
-                          <p>Phí: <span class='money'><?php echo intval($money) * 0.05 * 1000 ?></span></p>
+                          <p>Phí: <span class='money'><?php echo intval($money)*0.05*1000?></span></p>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-md-6">
-                          <p>Người nhận: <span><?php echo $receiver['FULL_NAME'] ?></span></p>
+                          <p>Người nhận: <span><?php echo $receiver['FULL_NAME']?></span></p>
                         </div>
                         <div class="col-md-6">
                         </div>
                       </div>
                     </div>
-
+        
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="agree">Xác nhận</button>
@@ -178,6 +166,5 @@ if (isset($_POST['is_confirmed'])) {
             </div>
         </div>
     </div>
-    <?php }?>
   </body>
 </html>

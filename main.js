@@ -130,7 +130,7 @@ $(document).ready(function () {
       data:dataString,
       url:'transaction.php',
       success:function(data) {
-        $('#modal_transfer').modal('show');
+        $('#modal_transfer').show();
       }
     });
   });

@@ -291,6 +291,25 @@ function get_list_history()
     }
     return array('code' => 0, 'data' => $data);
 }
+function get_history_user($user_id, $type) {
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY WHERE USER_ID = ? AND TYPE = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('ss', $user_id, $type);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = array();
+    while (($row = $result->fetch_assoc())) {
+        $data[] = $row;
+    }
+    if ($result->num_rows === 0) {
+        return array('code' => 1, 'error' => 'Empty data');
+    }
+    return array('code' => 0, 'data' => $data);
+}
 
 function history_sort_date($a, $b)
 {

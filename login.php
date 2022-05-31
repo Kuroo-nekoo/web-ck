@@ -114,7 +114,7 @@ if (isset($_SESSION['temp_lock_time'])) {
         <?php } else if (isset($data['activated_state']) && $data['activated_state'] === "vô hiệu hóa") {?>
           <div class="alert alert-danger"><?php echo $error_message ?></div>
         <?php } else {?>
-      <form class="col-4 border " action="login.php" method="POST" >
+      <form class="col-4 border main" action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>
         <div class="text-danger h-6">
           <?php

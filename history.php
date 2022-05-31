@@ -6,11 +6,18 @@ $activated_state = $_SESSION['activated_state'];
 if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
+$user_id = $_SESSION['user_id'];
+if(get_history_user($user_id,'chuyển tiền')['code'] == 0){
+    $history_transfer = get_history_user($user_id,'chuyển tiền')['data'];
+}else {
+    $history_transfer = [];
+}
 
-$conn = connect_database();
-$sql = "Select * from  history where type ='transaction'";
-$result = $conn->query($sql);
-
+if(get_history_user($user_id,'nạp tiền')['code'] == 0){
+  $history_recharge = get_history_user($user_id,'nạp tiền')['data'];
+}else {
+  $history_recharge = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,53 +57,44 @@ $result = $conn->query($sql);
     <div class="alert alert-danger"><?php echo $error_message ?></div>
   <?php } else {?>
     <div class="container">
-        <h2 style="text-align: center">Transaction History</h2>
+      <div class="main">
+      <h2 style="text-align: center">Lịch sử rút tiền</h2>
+        <table class = "table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Người gửi</th>
+                        <th>SĐT người nhận</th>
+                        <th>Số tiền</th>
+                        <th>Thời gian</th>
 
-       <br>
-       <div>
-    <table class = "table table-striped">
-        <thead>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+        <?php if ($history_transfer): ?>
+          <?php foreach ($history_transfer as $history):
+                ?>
             <tr>
-                <th>ID</th>
-                <th>Người gửi</th>
-                <th>SĐT người nhận</th>
-                <th>Số tiền</th>
-                <th>Thời gian</th>
+                <td><?php echo $history['ID']; ?></td>
+                <td><?php echo $history['USER_ID']; ?></td>
+                <td><?php echo $history['RECEIVER_PHONE']; ?></td>
+                <td class="money"><?php echo $history['AMOUNT']; ?></td>
+                <td><?php echo $history['TIME']; ?></td>
+
 
             </tr>
-        </thead>
-        <tbody>
+          <?php endforeach; ?>
+        <?php endif; ?>
 
-        <?php
-
-    while ($row = $result->fetch_assoc()) {
-        ?>
-    <tr>
-        <td><?php echo $row['ID']; ?></td>
-        <td><?php echo $row['USER_ID']; ?></td>
-        <td><?php echo $row['RECEIVER_PHONE']; ?></td>
-        <td id='money'><?php echo $row['AMOUNT']; ?></td>
-        <td><?php echo $row['TIME']; ?></td>
-
-
-    </tr>
-    <?php
-}
-    $conn->close();
-    $conn = connect_database();
-
-    $sql1 = "Select * from  history where type ='recharge'";
-    $result1 = $conn->query($sql1);
-    ?>
-
- </table>
-
+        </table>
+        </div>
+    </div>
  <div class="container">
-        <h2 style="text-align: center">Recharge History</h2>
-
-       <br>
-       <div>
-    <table class = "table table-striped">
+   <div class="main">
+   <h2 style="text-align: center">Lịch sử nạp tiền</h2>
+ <table class = "table table-striped main">
         <thead>
             <tr>
                 <th>ID</th>
@@ -104,28 +102,29 @@ $result = $conn->query($sql);
                 <th>Số tiền</th>
                 <th>Thời gian</th>
 
+
             </tr>
         </thead>
         <tbody>
 
-        <?php
 
-    while ($row1 = $result1->fetch_assoc()) {
+<?php if ($history_recharge): ?>
+  <?php foreach ($history_recharge as $history):
         ?>
     <tr>
-        <td><?php echo $row1['ID']; ?></td>
-        <td><?php echo $row1['USER_ID']; ?></td>
-        <td><?php echo $row1['AMOUNT']; ?></td>
-        <td><?php echo $row1['TIME']; ?></td>
+        <td><?php echo $history['ID']; ?></td>
+        <td><?php echo $history['USER_ID']; ?></td>
+        <td class="money"><?php echo $history['AMOUNT']; ?></td>
+        <td><?php echo $history['TIME']; ?></td>
 
 
     </tr>
-    <?php
-}
+  <?php endforeach; ?>
+<?php endif; ?>
 
-    ?>
  </table>
-
- <?php }?>
- </body>
+ </div>
+      </div>
+    <?php }?>
+    </body>
 </html>
