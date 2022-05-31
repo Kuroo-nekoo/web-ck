@@ -85,7 +85,7 @@ if (isset($_POST['email'])
   </head>
   <body>
     <?php include_once './navbar.php'?>
-        <div class="text-danger h5">
+        <div class="alert alert-danger">
           <?php if (isset($error_message) && !empty($error_message)) {
     echo $error_message;
 }
