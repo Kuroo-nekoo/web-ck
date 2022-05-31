@@ -36,7 +36,17 @@ if (isset($_GET['is_unlock'])) {
         header('Location: ./user_info.php?user_id=' . $user_id);
     }
 }
+if(get_history_user($user_id,'chuyển tiền')['code'] == 0){
+    $history_transfer = get_history_user($user_id,'chuyển tiền')['data'];
+}else {
+    $history_transfer = [];
+}
 
+if(get_history_user($user_id,'nạp tiền')['code'] == 0){
+  $history_recharge = get_history_user($user_id,'nạp tiền')['data'];
+}else {
+  $history_recharge = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,16 +63,16 @@ if (isset($_GET['is_unlock'])) {
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link rel="stylesheet" href="./style.css">
-    <script type="" src="http://localhost/main.js"></script>
+    <script type="" src="./main.js"></script>
 </head>
 
 <body>
 <?php include './navbar_admin.php'?>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-9 mr-auto">
-            <h3>Thông tin người dùng</h3>
-            <form>
+            <div class="col-md-6">
+                <form class="main">
+                <h3>Thông tin người dùng</h3>
                 <div class="form-group form-row">
                     <label for="name" class="col-md-3">User name:</label>
                     <input class="form-control col-md-8"  type="text" value="<?php echo $user_data['USERNAME']; ?> " disabled/>
@@ -129,6 +139,79 @@ if (isset($_GET['is_unlock'])) {
                 </div>
 		    </form>
 	        </div>
+            <div class="col-md-6">
+            <div class="container">
+                <div class="row">
+      <div class="main col-md-12">
+      <h2 style="text-align: center">Lịch sử rút tiền</h2>
+        <table class = "table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Người gửi</th>
+                        <th>SĐT người nhận</th>
+                        <th>Số tiền</th>
+                        <th>Thời gian</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+
+        <?php if ($history_transfer): ?>
+          <?php foreach ($history_transfer as $history):
+                ?>
+            <tr>
+                <td><?php echo $history['ID']; ?></td>
+                <td><?php echo $history['USER_ID']; ?></td>
+                <td><?php echo $history['RECEIVER_PHONE']; ?></td>
+                <td class="money"><?php echo $history['AMOUNT']; ?></td>
+                <td><?php echo $history['TIME']; ?></td>
+
+
+            </tr>
+          <?php endforeach; ?>
+        <?php endif; ?>
+
+        </table>
+        </div>
+    </div>
+ <div class="row">
+    <div class="main col-md-12">
+                <h2 style="text-align: center">Lịch sử nạp tiền</h2>
+            <table class = "table table-striped main">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Người nạp</th>
+                            <th>Số tiền</th>
+                            <th>Thời gian</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+            <?php if ($history_recharge): ?>
+            <?php foreach ($history_recharge as $history):
+                    ?>
+                <tr>
+                    <td><?php echo $history['ID']; ?></td>
+                    <td><?php echo $history['USER_ID']; ?></td>
+                    <td class="money"><?php echo $history['AMOUNT']; ?></td>
+                    <td><?php echo $history['TIME']; ?></td>
+
+
+                </tr>
+            <?php endforeach; ?>
+            <?php endif; ?>
+
+            </table>
+        </div>
+    </div>
+      </div>
+            </div>
         </div>
     </div>
 

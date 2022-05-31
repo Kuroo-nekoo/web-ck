@@ -4,10 +4,14 @@ require_once "./common.php";
 require_once "./email.php";
 
 session_start();
+if (!$_SESSION['user_id']) {
+  header('Location: login.php');
+}
 if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
 }
+
 
 if (isset($_POST['email'])
     && isset($_POST['phone_number'])

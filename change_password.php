@@ -53,9 +53,9 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password']) && is
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body style="height: 100vh;" >
-  <?php require_once './navbar.php'?>
+  <?php require_once './navbar_user.php'?>
       <div class="d-flex justify-content-center align-items-center h-100">
-      <form class="col-4 border" action="change_password.php" method="POST">
+      <form class="col-4 border main" action="change_password.php" method="POST">
         <div class="text-danger h6">
           <?php
 echo isset($error_message) ? $error_message : '';

@@ -3,6 +3,10 @@ require_once "./db.php";
 require_once "./common.php";
 
   session_start();
+
+  if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+}
   if (isset($_SESSION['is_new_user'])) {
     $is_new_user = $_SESSION['is_new_user'];
     check_new_user($is_new_user);
@@ -12,9 +16,7 @@ require_once "./common.php";
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
   $conn = connect_database();
-  if (!$_SESSION['user_id']) {
-    header('Location: login.php');
-  }
+
   $user_id = $_SESSION['user_id'];
   $error='';
   $data_db3=array();

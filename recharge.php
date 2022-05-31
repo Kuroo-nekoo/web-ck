@@ -3,8 +3,12 @@ require_once "./db.php";
 require_once "./common.php";
 
 session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php');
+}
+
 $activated_state = $_SESSION['activated_state'];
-if ($activated_state === "chờ cập nhật" || $activated_state === "chưa xác minh") {
+if ($activated_state == "chờ cập nhật" || $activated_state == "chưa xác minh") {
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
 if (isset($_SESSION['is_new_user'])) {
@@ -13,9 +17,6 @@ if (isset($_SESSION['is_new_user'])) {
 }
 
 $conn = connect_database();
-if (!$_SESSION['user_id']) {
-    header('Location: login.php');
-}
 $user_id = $_SESSION['user_id'];
 $error = '';
 $data_db3 = array();
@@ -29,7 +30,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
     $data['expiration_date'] = isset($_POST['expiration_date']) ? $_POST['expiration_date'] : '';
     $data['cvv'] = isset($_POST['cvv']) ? $_POST['cvv'] : '';
     $data['money'] = isset($_POST['money']) ? $_POST['money'] : '';
-    if ($data['credit_id'] === '' || $data['expiration_date'] === '' || $data['cvv'] === '' || $data['money'] === '') {
+    if ($data['credit_id'] == '' || $data['expiration_date'] == '' || $data['cvv'] == '' || $data['money'] == '') {
         $error = 'Vui lòng điền đầy đủ thông tin';
     } else if (strlen($_POST['credit_id']) !== 6) {
         $error = 'Định dạng thẻ không hợp lệ!';
@@ -38,7 +39,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
     $result0 = $conn->query($sql0);
     $data_db0 = $result0->fetch_all();
     foreach ($data_db0 as $temp) {
-        if ($data['credit_id'] === $temp) {
+        if ($data['credit_id'] == $temp) {
             break;
         }
         $error = 'Thẻ không hỗ trợ !';
@@ -48,7 +49,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
     $data_db1 = $result1->fetch_all();
 
     foreach ($data_db1 as $temp) {
-        if ($data['expiration_date'] === $temp) {
+        if ($data['expiration_date'] == $temp) {
             $error = '';
             break;
         } else {
@@ -59,7 +60,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
     $result2 = $conn->query($sql2);
     $data_db2 = $result2->fetch_all();
     foreach ($data_db2 as $temp) {
-        if ($data['cvv'] === $temp) {
+        if ($data['cvv'] == $temp) {
             $error = '';
             break;
         } else {
@@ -70,7 +71,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
     $data_db3 = $result3->fetch_all();
 
     foreach ($data_db3 as $temp) {
-        if ($data['credit_id'] === $temp[0] && $data['expiration_date'] === $temp[1] && $data['cvv'] === $temp[2]) {
+        if ($data['credit_id'] == $temp[0] && $data['expiration_date'] == $temp[1] && $data['cvv'] == $temp[2]) {
             $error = '';
             break;
         } else {
@@ -78,8 +79,8 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
         }
     }
     // recharge
-    if ($error === '') {
-        if ($data['credit_id'] === $data_db3[0][0]) {
+    if ($error == '') {
+        if ($data['credit_id'] == $data_db3[0][0]) {
             $sql4 = "Select * from  account WHERE $user_id=?";
             $stm4 = $conn->prepare($sql4);
             $stm4->bind_param('i', $user_id);
@@ -107,7 +108,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
                 echo "Error: " . $sql6 . "<br>" . $conn->error;
             }
 
-        } else if ($data['credit_id'] === $data_db3[1][0]) {
+        } else if ($data['credit_id'] == $data_db3[1][0]) {
             if ($data['money'] > 1000000) {
                 $error = 'Hạn mức nạp tiền của thẻ là 1tr !';
             } else {
@@ -225,7 +226,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
         <div class="form-group">
           <label for="money">Số tiền:
         </label>
-          <input type="text" class="form-control" id="money" placeholder="Số tiền" name="money">
+          <input type="text" class="form-control money" id="money" placeholder="Số tiền" name="money" data-type="currency" >
         </div>
         <div class="errorMessage my-3"><span id="errMessage">  <?php echo isset($error) ? $error : ''; ?></span></div>
         <button type="submit" class="btn btn-success btn-block" name="contact_action" >Xác nhận nạp thẻ</button>

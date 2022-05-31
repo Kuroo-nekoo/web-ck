@@ -57,7 +57,7 @@ if (isset($_POST['new_password']) && isset($_POST['confirm_new_password'])
   <body style="height: 100vh;" >
   <?php require_once './navbar.php'?>
       <div class="d-flex justify-content-center align-items-center h-100">
-    <form class="col-4 border" action="change_password_first_time.php" method="POST">
+    <form class="col-4 border main" action="change_password_first_time.php" method="POST">
         <h1 class="text-center ">Change password</h1>
         <div class="text-danger">
           <?php

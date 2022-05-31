@@ -159,9 +159,8 @@ elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
 elseif ($user_data['ACTIVATED_STATE'] == 'vô hiệu hóa'):
     $bg_color = 'form-control col-md-8 bg-secondary text-white';
 endif;
-if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
+?>
 									<p class= '<?php echo $bg_color ?>' ><?php echo $user_data['ACTIVATED_STATE'] ?></p>
-								<?php endif;?>
 								</div>
 							</div>
 

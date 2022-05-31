@@ -2,6 +2,9 @@
 require_once "./db.php";
 require_once "./common.php";
 session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php');
+}
 $activated_state = $_SESSION['activated_state'];
 if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
@@ -48,7 +51,7 @@ if(get_history_user($user_id,'nạp tiền')['code'] == 0){
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
     <script src="./main.js"></script>
   </head>
   <body>

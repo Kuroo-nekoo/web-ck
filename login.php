@@ -7,7 +7,7 @@ if (isset($_SESSION['is_admin'])) {
     header('Location: ./admin.php');
 }
 
-if (isset($_SESSION['user_id'])) {
+else if (isset($_SESSION['user_id'])) {
     header('Location: ./user.php');
 }
 
@@ -21,7 +21,7 @@ if (isset($_POST['username']) && $_POST['password'] && !empty($_POST['username']
     $password = $_POST['password'];
 
     if ($_POST['username'] == 'admin' && $_POST['password'] == 123456) {
-        $_SESSION['is_admin'] = true;
+        $_SESSION['is_admin'] = 1;
         header('Location: admin.php');
     } else {
         if (strlen($username) !== 10) {
