@@ -4,119 +4,47 @@ require_once "./common.php";
 require_once "./email.php";
 session_start();
 
-$type='transaction';
-$conn = connect_database();
 if (!$_SESSION['user_id']) {
-  header('Location: login.php');
+    header('Location: login.php');
+}
+
+$activated_state = $_SESSION['activated_state'];
+if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
+    $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
 $user_id = $_SESSION['user_id'];
 
-$error="";
-if (isset($_POST['phone_number']) && isset($_POST['currency-field'] )&& isset($_POST['fee_transaction']) && isset($_POST['content'] )){
+
+if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee_transaction']) && isset($_POST['content'])) {
     $content= $_POST['content'];
     $who_pay = $_POST['fee_transaction'];
     $phone_number= $_POST['phone_number'];
-    $money= $_POST['currency-field'];
-    $sql = "Select * from  account WHERE PHONE_NUMBER = ?";    
-    $stm = $conn->prepare($sql);
-    $stm->bind_param('s',$phone_number);
-    if (!$stm->execute()) {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-    $old_money=0;
-    $email="";
-    $new_money=0;
-    $result = $stm->get_result();
-    $row= $result->fetch_assoc();
-    if(empty($row)){
-      $error="Nguời nhận không hợp lệ !";
-    }
-    else{
-      $old_money = $row['BALANCE'];// old money of receiver
-      $new_money = $old_money + (int)$money; // new money of receiver
-      $email= $row['EMAIL'];
-    }
-    $fee_transaction =((int)$money)*5/100;
-    // money of sender
+    $money= str_replace('.','',$_POST['money']);
+    $receiver = get_user_data_by_phone($phone_number)['data'];
+}
 
-    $sql0 = "Select * from  account WHERE USER_ID =?";    
-    $stm0 = $conn->prepare($sql0);
-    $stm0->bind_param('i',$user_id);
-    if (!$stm0->execute()) {
-        echo "Error: " . $sql0 . "<br>" . $conn->error;
+if(isset($_POST['is_confirmed'])) {
+  $result = transaction($user_id, $phone_number, $money, $content, $who_pay);
+  echo $result['code'];
+  if($result['code'] == 0){
+    if (isset($_SESSION['started']) && (time() - $_SESSION['otp']['started'] < 60)) {
+      $otp = $_SESSION['otp'];
+    } else {
+      $otp = gen_otp();
+      $email_phone_number = get_user_data($user_id)['email'];
+      $_SESSION['otp'] = array('otp' => $otp, 'started' => time(), 'email_phone_number' => $email_phone_number);
+      $subject = "Xác nhận chuyển tiền";
+      $body = "Mã OTP của bạn là: $otp";
+      send_email($subject, $body, $email_phone_number);
     }
+    header('Location: confirm_transfer.php');
+  }
+  else {
+      $error_message = $result['error'];
+  }
+}    
 
-    $result0 = $stm0->get_result();
-    $row0= $result0->fetch_assoc();
-    $old_money0 = $row0['BALANCE'];
-    if($old_money0 <(int)$money || $old_money0 <=0 ){
-      $error="Số dư không đủ để thực hiện giao dịch";
-    }
-   
-   $is_allow=1;
-   if($error ===""){
-      if ($who_pay ==='sender'){ 
-        // update money for receiver
-          $sql1 = "Update account set BALANCE= ?+? where phone_number =?";
-          $stm1 = $conn->prepare($sql1);
-          $stm1->bind_param('dds',$old_money,$money,$phone_number);
-          if (!$stm1->execute()) {
-              echo "Error: " . $sql1 . "<br>" . $conn->error;
-          }
-          // update money for sender
-          $sql2= "update `account` set balance =?-?-? WHERE USER_ID =?";
-          $new_money0= $old_money0-$money-$fee_transaction;
-          $stm2= $conn->prepare($sql2);
-          $stm2->bind_param('dddi',$old_money0,$fee_transaction,$money,$user_id);
-          if (!$stm2->execute()) {
-            echo "Error: " . $sql4 . "<br>" . $conn->error;
-          }
-          $subject = "Balance fluctuations";
-          $body = "Tài khoản: + " .$money.'k' . "<br/>" . "Số dư" . $new_money."k";
-          $email_address = $email;
-          send_email($subject, $body, $email_address);
-          $error="Giao dịch thành công !";
-
-        }
-          else{
-          // check allow
-          // update money for receiver
-          $sql3 = "Update account set balance= ?-? where phone_number =?";
-          $stm3 = $conn->prepare($sql3);
-          $stm3->bind_param('dds',$new_money,$fee_transaction,$phone_number);
-          if (!$stm3->execute()) {
-              echo "Error: " . $sql3 . "<br>" . $conn->error;
-          }
-          // update money for sender
-          $sql4= "update `account` set balance =? WHERE USER_ID =?";
-          $new_money0= $old_money0-$money;
-          $stm4= $conn->prepare($sql4);
-          $stm4->bind_param('di',$new_money0,$user_id);
-
-          if (!$stm4->execute()) {
-            echo "Error: " . $sql4 . "<br>" . $conn->error;
-          }
-
-          // send mail to notice
-          $subject = "Balance fluctuations";
-          $body = "Tài khoản: + " .$money.'k' . "<br/>" . "Số dư" . ($new_money-$fee_transaction);
-          $email_address = $email;
-          send_email($subject, $body, $email_address);
-        }
-          
-          // add to history table
-          date_default_timezone_set('asia/ho_chi_minh'); //set timezone
-          $date = date('y-m-d G:i:s');
-          $sql5="insert into history (USER_ID, RECEIVER_PHONE,AMOUNT,TIME,IS_ALLOW,CONTENT,TYPE) values (?,?,?,?,?,?,?)";
-          $stm5 = $conn->prepare($sql5);
-          $stm5->bind_param('isissss', $user_id, $phone_number, $money, $date, $is_allow, $content,$type);
-          if (!$stm5->execute()) {
-              echo "Error: " . $sql5 . "<br>" . $conn->error;
-          }
-          $error="Giao dịch thành công !";
-      }
-    }
-?>$ 
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -145,58 +73,100 @@ if (isset($_POST['phone_number']) && isset($_POST['currency-field'] )&& isset($_
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="./style.css">
+    <script type="" src="./main.js"></script>
   </head>
   <body>
-  <?php require_once 'navbar_user.php'?>
+    <?php include_once './navbar_user.php'?>
+    <?php if (isset($error_message) && $error_message !== ""): ?>
+      <div class="alert alert-danger"><?php echo $error_message ?> </div>
+    <?php endif;?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-md-4 border" action="transaction.php" method="post">
-      <div class="text-danger h5">
-       </div>
-        <h1>Chi tiết giao dịch </h1>
-        <div class="form-group">
-          <label for="phone_number">Số điện thoại: </label>
-          <input
-            id="phone_number"
-            class="form-control"
-            placeholder="Số điện thoại"
-            type="text"
-            name="phone_number"
-            require
-          />
-        </div>
-        <div class="form-group">
-          <label for="money">Số tiền: </label>
-          <input type="text" 
-          name="currency-field" 
-          id="currency-field" 
-          value="" data-type="currency" 
-          placeholder="Số tiền">
-        </div>
-        <div class="form-group">
-                <label for="fee_transaction">Phí chuyển (5%): </label>
-                <select name="fee_transaction" id="fee_transaction" class="custom-select" >
-                    <option value="sender">Người gửi trả</option>
-                    <option value="receiver">Người nhận trả</option>
-                </select>
-            </div>
-        <div class="form-group">
-          <label for="content">Ghi chú: </label>
-          <input
-            type="text"
-            id="content"
-            placeholder="Ghi chú"
-            class="form-control"
-            name="content"
-          />
-        </div>
-        <div class="form-group">
-          <label for="receiver_name">Người nhận:  
-        </label>
-          <input type="text" class="form-control" id="address" placeholder="Autofill" name="address">
-        </div>
-        <div class="errorMessage my-3"><span id="errMessage">  <?php echo isset($error) ? $error : ''; ?></span></div>
-        <button type="submit" class="btn btn-success btn-block">Xác nhận chuyển</button>
+      <form id='myForm' class="col-md-4 border main" action="./transaction.php" method="POST">
+          <h1 class='ml-5'>Chuyển tiền</h1>
+          <div class="form-group">
+            <label for="phone_number">Số điện thoại người nhận: </label>
+            <input
+              id="phone_number"
+              class="form-control"
+              placeholder="Số điện thoại"
+              type="text"
+              name="phone_number"
+              require
+            />
+          </div>
+          <div class="form-group">
+            <label for="money">Số tiền (VNĐ): </label>
+            <input 
+              class="form-control"
+              type="text" 
+              id="money"
+              name="money" 
+              data-type="currency" 
+              placeholder="Số tiền"
+              require>
+          </div>
+          <div class="form-group">
+            <label for="fee_transaction">Phí chuyển (5%): </label>
+            <select name="fee_transaction" id="fee_transaction" class="custom-select" >
+                <option value="sender">Người gửi trả</option>
+                <option value="receiver">Người nhận trả</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="content">Ghi chú: </label>
+            <input
+              type="text"
+              id="content"
+              placeholder="Ghi chú"
+              class="form-control"
+              name="content"
+              require
+            />
+          </div>
+          <div class="form-group float-right">
+            <button id='submit_form' type="submit" class="btn btn-primary mr-2">Chuyển</button>
+            <!-- <button id='modal_form' type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal">Chuyển</button> -->
+          </div>
+          
       </form>
+    </div>
+
+    <div class="modal fade" id="modal_transfer" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-label">Xác nhận chuyển tiền</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Số tiền: <span class='money'><?php echo intval($money)*1000?></span></p>
+                        </div>  
+                        <div class="col-md-6">
+                          <p>Phí: <span class='money'><?php echo intval($money)*0.05*1000?></span></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Người nhận: <span><?php echo $receiver['FULL_NAME']?></span></p>
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                      </div>
+                    </div>
+        
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="agree">Xác nhận</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
     </div>
   </body>
 </html>

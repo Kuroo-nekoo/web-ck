@@ -16,11 +16,11 @@ if (isset($_SESSION['is_new_user'])) {
     check_new_user($is_new_user);
 }
 
-if (isset($_POST['username']) && $_POST['password']) {
+if (isset($_POST['username']) && $_POST['password'] && !empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if ($_POST['username'] == 'admin' && $_POST['password'] == '123456') {
+    if ($_POST['username'] == 'admin' && $_POST['password'] == 123456) {
         $_SESSION['is_admin'] = true;
         header('Location: admin.php');
     } else {
@@ -31,15 +31,20 @@ if (isset($_POST['username']) && $_POST['password']) {
         } else {
             $data = login($username, $password);
 
-            if (isset($data['is_locked']) && $data['is_locked'] === 1) {
+            if (isset($data['activated_state']) && $data['activated_state'] === "vô hiệu hóa") {
+                $error_message = "tài khoản này đã bị vô hiệu hóa, vui lòng liên hệ tổng đài 18001008";
+            } else if (isset($data['is_locked']) && $data['is_locked'] === 1) {
                 $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
                 $is_locked = 1;
             } else if ($data['code'] === 0) {
                 $is_new_user = $data['data']['IS_NEW_USER'];
                 unset($_SESSION['user_id']);
                 unset($_SESSION['is_new_user']);
+                unset($_SESSION['activated_state']);
                 $_SESSION['user_id'] = $data['data']['USER_ID'];
                 $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
+                $_SESSION['activated_state'] = $data['data']['ACTIVATED_STATE'];
+
                 if ($is_new_user === 1) {
                     header('Location: change_password_first_time.php');
                 } else {
@@ -48,9 +53,9 @@ if (isset($_POST['username']) && $_POST['password']) {
             } else if ($data['code'] === 1) {
                 if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
                     $_SESSION['temp_lock_time'] = time();
+                } else {
+                    $error_message = $data['error'];
                 }
-            } else if ($data['activated_state'] === 'chờ cập nhật') {
-                header('Location: update_id_image.php');
             }
         }
     }
@@ -106,6 +111,8 @@ if (isset($_SESSION['temp_lock_time'])) {
         </div>
       <?php } else if (isset($is_temp_locked) && $is_temp_locked === 1) {?>
         <div class="alert alert-danger"><?php echo $error_message ?></div>
+        <?php } else if (isset($data['activated_state']) && $data['activated_state'] === "vô hiệu hóa") {?>
+          <div class="alert alert-danger"><?php echo $error_message ?></div>
         <?php } else {?>
       <form class="col-4 border " action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>

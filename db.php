@@ -168,6 +168,38 @@ function get_user_data($user_id)
     return array('code' => 0, 'data' => $data);
 }
 
+function get_history_data($id)
+{
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY WHERE ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $id);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    return array('code' => 0, 'data' => $data);
+}
+
+function get_user_data_by_phone($phone_number)
+{
+    $conn = connect_database();
+    $sql = "SELECT * FROM ACCOUNT WHERE PHONE_NUMBER = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $phone_number);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    return array('code' => 0, 'data' => $data);
+}
+
 function change_password($old_password, $new_password, $user_id)
 {
     $conn = connect_database();
@@ -242,6 +274,35 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
+function get_list_history() {
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY";
+    $result = $conn->query($sql);
+    $data = array();
+    while (($row = $result->fetch_assoc())) {
+        $data[] = $row;
+    }
+    if ($result->num_rows === 0) {
+        return array('code' => 1, 'error' => 'Empty data');
+    }
+    return array('code' => 0, 'data' => $data);
+}
+
+function history_sort_date($a, $b)
+{
+    return strtotime($b['TIME']) - strtotime($a['TIME']);
+}
+
+function get_list_history_sort_date() {
+    $data = get_list_history();
+    if ($data['code'] == 0) {
+        $result = $data['data'];
+        usort($result, 'history_sort_date');
+        return array('code' => 0, 'data' => $result);
+    }
+    return array('code' => 1, 'error' => 'Empty data');
+}
+
 function sort_date_created($a, $b)
 {
     return strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
@@ -277,6 +338,20 @@ function update_state($user_id, $state)
     return array('code' => 0);
 }
 
+function update_state_history($id,$state) 
+{
+    $conn = connect_database();
+    $sql = "UPDATE HISTORY SET IS_ALLOW = '{$state}'  WHERE ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}
+
 function update_id_image($user_id, $front_id_image_dir, $back_id_image_dir)
 {
     $conn = connect_database();
@@ -303,16 +378,88 @@ function unlock($user_id)
     return array('code' => 0);
 }
 
-function update_id_card($user_id, $front_id_image_dir, $back_id_image_dir)
+
+function update_balance($user_id,$amount)
 {
     $conn = connect_database();
-    $sql = "UPDATE ACCOUNT SET FRONT_ID_IMAGE_DIR = '{$front_id_image_dir}', BACK_ID_IMAGE_DIR = '{$back_id_image_dir}' WHERE USER_ID = ?";
+    $sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
     $stm = $conn->prepare($sql);
-    $stm->bind_param('s', $user_id);
+    $stm->bind_param('ss', $amount, $user_id);
     if (!$stm->execute()) {
         return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
     }
 
+    $stm->execute();
+    return array('code' => 0);
+}
+
+function update_transfer($id, $who_pay) {
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY WHERE ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    $fee =$data['AMOUNT'] * 0.05;
+    $receiver = get_user_data_by_phone($data['RECEIVER_PHONE'])['data'];
+    if($who_pay == 'depositor') {
+        $money_after_fee = $data['AMOUNT'] + $fee;
+        update_balance($data['USER_ID'], -$money_after_fee);
+    }
+    if(($who_pay == 'receiver') & ($receiver['BALANCE'] < $fee)) {
+        $money_after_fee =$data['AMOUNT'] - $fee;
+        update_balance($data['USER_ID'],$money_after_fee);
+        return array('code' => 0, 'message' => 'Số dư không đủ để chịu phí giao dịch, trừ vào số tiền nhận được');
+    }
+    else {
+        $money_after_fee =$data['AMOUNT'] - $fee;
+        update_balance($data['USER_ID'],$money_after_fee);
+    }
+    $stm->close();
+}
+
+
+function transaction($user_id, $phone_number_receiver, $money, $content, $who_pay) {
+    $depositor = get_user_data($user_id)['data'];
+    if(get_user_data_by_phone($phone_number_receiver)['code'] == 1) {
+        return array('code' => 1, 'error' => 'Không tìm thấy người dùng');
+    }
+    else {
+        $receiver = get_user_data_by_phone($phone_number_receiver)['data'];
+        $state_receiver = $receiver['ACTIVATED_STATE'];
+        if($state_receiver == 'chờ xác minh' or $state_receiver == 'chờ cập nhật') {
+            return array('code' => 1, 'error' => 'Người nhận chưa xác minh');
+        }
+        else if ($state_receiver == 'đã bị khóa' or $state_receiver == 'vô hiệu hóa') {
+            return array('code' => 1, 'error' => 'Người nhận đã bị khóa hoặc vô hiệu hóa');
+        }
+    }
+    $money = intval($money)*1000;
+    if ($money >= 5000000) {
+        $is_allow = 0;
+    }
+    else $is_allow = 1;
+    $fee = $money * 0.05;
+    if($depositor['BALANCE'] < $money) {
+        return array('code' => 1, 'error' => 'Số dư không đủ');
+    }
+    else if (($who_pay == 'depositor') & ($depositor['BALANCE'] < ($money + $fee))) {
+        return array('code' => 1, 'error' => 'Số dư không đủ để chịu phí giao dịch');
+    }
+
+    date_default_timezone_set('asia/ho_chi_minh'); //set timezone
+    $time = date('y-m-d G:i:s');
+    $conn = connect_database();
+    $sql = "INSERT INTO HISTORY (USER_ID, RECEIVER_PHONE, AMOUNT, TIME, IS_ALLOW ,CONTENT, TYPE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('ssisiss', $user_id, $phone_number_receiver, $money, $time, $is_allow, $content, 'giao dịch');
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+    
     $stm->execute();
     return array('code' => 0);
 }

@@ -1,0 +1,9 @@
+user requirement
+- state = 'chờ xác minh': user chưa được phép dùng hầu hết các tính năng của hệ thống ngoại 
+trừ xem thông tin cá nhân và đổi mật khẩu (có thể cho user xem đầy đủ các menu của trang web nhưng khi click vào thì
+sẽ hiển thị thông báo đại loại “Tính năng này chỉ dành cho các tài khoản đã được xác minh”).
+
+- state = 'vô hiệu hóa': Nếu đăng nhập, user sẽ nhận được
+thông báo “tài khoản này đã bị vô hiệu hóa, vui lòng liên hệ tổng đài 18001008”.
+
+- hiển thị số dư phần thông tin tài khoản

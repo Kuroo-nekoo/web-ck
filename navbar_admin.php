@@ -23,7 +23,7 @@ echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="#">Phê duyệt rút/chuyền tiền</a>
+      <a class="nav-link" href="/history_admin.php">Phê duyệt rút/chuyền tiền</a>
     </li>
 
     <li class="nav-item">
