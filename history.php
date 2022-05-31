@@ -68,7 +68,7 @@ while ($row = $result->fetch_assoc()) {
         <td><?php echo $row['ID']; ?></td>
         <td><?php echo $row['USER_ID']; ?></td>
         <td><?php echo $row['RECEIVER_PHONE']; ?></td>
-        <td oninput="formatCurrency(this,'blur')"><?php echo $row['AMOUNT']; ?></td>
+        <td id='money'><?php echo $row['AMOUNT']; ?></td>
         <td><?php echo $row['TIME']; ?></td>
         
 

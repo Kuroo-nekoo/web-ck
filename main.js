@@ -99,7 +99,7 @@ function formatNumber(n) {
 
 function formatCurrency(input, blur) {
   // get input value
-  var input_val = input.value();
+  var input_val = input.val();
 
   // don't validate empty input
   if (input_val === "") { return; }

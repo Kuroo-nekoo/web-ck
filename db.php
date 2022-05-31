@@ -379,3 +379,48 @@ function unlock($user_id)
 }
 
 
+function update_balance($user_id,$amount)
+{
+    $conn = connect_database();
+    $sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('ss', $amount, $user_id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}
+
+
+function transaction($user_id, $phone_number, $money, $content, $who_pay) {
+    $depositor = get_user_data($user_id)['data'];
+    if(get_user_data_by_phone($phone_number)['code'] == 1) {
+        return array('code' => 1, 'error' => 'Không tìm thấy người dùng');
+    }
+    else {
+        $receiver = get_user_data_by_phone($phone_number)['data'];
+        $state_receiver = $receiver['ACTIVATED_STATE'];
+        if($state_receiver == 'chờ xác minh' or $state_receiver == 'chờ cập nhật') {
+            return array('code' => 1, 'error' => 'Người nhận chưa xác minh');
+        }
+        else if ($state_receiver == 'đã bị khóa' or $state_receiver == 'vô hiệu hóa') {
+            return array('code' => 1, 'error')
+        }
+    }
+    if($depositor['balance'] < $money) {
+        return array('code' => 1, 'error' => 'Số dư không đủ');
+    }
+
+    $conn = connect_database();
+    $sql = "INSERT INTO TRANSACTION (USER_ID, PHONE_NUMBER, MONEY, CONTENT, WHO_PAY) VALUES (?, ?, ?, ?, ?)";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('sssss', $user_id, $phone_number, $money, $content, $who_pay);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}

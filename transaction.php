@@ -17,14 +17,10 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
     $who_pay = $_POST['fee_transaction'];
     $phone_number= $_POST['phone_number'];
     $money= $_POST['money'];
-    $sql = "Select * from  account WHERE PHONE_NUMBER = ?";    
-    $stm = $conn->prepare($sql);
-    $stm->bind_param('s',$phone_number);
-    if (!$stm->execute()) {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-    $result = $stm->get_result();
-    $row= $result->fetch_assoc();
+    $data = transaction($user_id, $phone_number, $money, $content, $who_pay);
+
+    $depositor = get_user_data($user_id);
+    $receiver = get_user_data_by_phone($phone_number);
     $old_money = $row['BALANCE'];// old money of receiver
     $new_money = $old_money + $money; // new money of receiver
     $email= $row['EMAIL'];
@@ -134,15 +130,15 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="./style.css">
-    <script type="" src="http://localhost/main.js"></script>
+    <script type="" src="./main.js"></script>
   </head>
   <body>
     <?php include_once './navbar_user.php'?>
     <div class="d-flex justify-content-center align-items-center">
-      <form class="col-md-4 border" action="transaction.php" method="post">
+      <form class="col-md-4 border main" action="transaction.php" method="post">
       <div class="text-danger h5">
        </div>
-        <h1>Chi tiết giao dịch </h1>
+        <h1>Chuyển tiền</h1>
         <div class="form-group">
           <label for="phone_number">Số điện thoại: </label>
           <input
@@ -158,13 +154,13 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
           <label for="money">Số tiền (VNĐ): </label>
 
           <input 
-          class="form-control"
-          type="text" 
-          name="money" 
-          id="currency-field" 
-          pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" 
-          data-type="currency" 
-          placeholder="Số tiền">
+            class="form-control"
+            type="text" 
+            name="money" 
+            id="money" 
+            pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" 
+            data-type="currency" 
+            placeholder="Số tiền">
         </div>
         <div class="form-group">
                 <label for="fee_transaction">Phí chuyển (5%): </label>
