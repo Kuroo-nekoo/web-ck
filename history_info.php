@@ -104,7 +104,7 @@ if (isset($_GET['is_browsed'])) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="agree">Đồng ý</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="disagree">Không đồng ý</button>
+                    <button type="button" class="btn btn-secondary" id="disagree">Không đồng ý</button>
                 </div>
             </div>
         </div>

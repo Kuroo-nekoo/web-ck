@@ -14,6 +14,7 @@ function readURL(input, placeToRender, placeToHide) {
 }
 
 
+
 function getUserInfo(user_id) {
   location.replace("/user_info.php?user_id=" + user_id);
 }
@@ -34,13 +35,39 @@ function browse(id) {
 }
 
 function formatMoney() {
-  if(document.getElementById("money")) {
-    var x = document.getElementById("money").innerHTML;
-    x = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(x)
-    document.getElementById("money").innerHTML = x;
+  if(document.getElementsByClassName("money")) {
+    list_money = document.getElementsByClassName("money");
+    for(let i = 0; i < list_money.length; i++) {
+      var money = list_money[i].innerHTML;
+      money = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(money)
+      list_money[i].innerHTML = money;
+    }
+  }
+}
+
+function confirmTransfer(error_message) {
+  if(error_message) {
+    $('.modal-title').html('Thông báo');
+    $('.modal-body').html(error_message);
+  }
+  else {
+    var url = window.location.href
+    console.log(url)
+    $('#agree').click(function () {
+      location.replace(url + '&is_confirmed=1');
+    })
+
   }
   
 }
+
+function clickSubmit() {
+  $('#modal_form').click(function () {
+    $('#submit_form').click();
+  })
+}
+
+
 function verification(user_id) {
   $('.modal-title').html('Xác minh tài khoản');
   $('.modal-body').html('Bạn có muốn xác minh cho tài khoản này?');
@@ -50,6 +77,8 @@ function verification(user_id) {
     location.replace(url + '&is_accepted=1');
   })
 }
+
+
 
 function rejected(user_id) {
   $('.modal-title').html('Vô hiệu hóa tài khoản');
@@ -88,6 +117,22 @@ $(document).ready(function () {
     blur: function() { 
       formatCurrency($(this), "blur");
     }
+  });
+  $("#submit_form").click(function(e) {
+    e.preventDefault();
+    var phone_number = $("#phone_number").val(); 
+    var money = $("#money").val();
+    var fee_transaction = $("#fee_transaction").val();
+    var content = $("#content").val();
+    var dataString = 'phone_number='+phone_number+'&money='+money+'&fee_transaction='+fee_transaction+'&content='+content;
+    $.ajax({
+      type:'POST',
+      data:dataString,
+      url:'transaction.php',
+      success:function(data) {
+        $('#modal_transfer').modal('show');
+      }
+    });
   });
   formatMoney()
 });
