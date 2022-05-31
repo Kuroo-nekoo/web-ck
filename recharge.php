@@ -19,7 +19,7 @@ if (!$_SESSION['user_id']) {
 $user_id = $_SESSION['user_id'];
 $error = '';
 $data_db3 = array();
-$type = 'recharge';
+$type = 'nạp tiền';
 // check input
 $data = array();
 
@@ -182,7 +182,7 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
       <div class="alert alert-danger"><?php echo $error_message ?></div>
       <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
-      <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post"  ">
+      <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post" >
       <div class="text-danger h5">
        </div>
         <h1>Nạp tiền </h1>
