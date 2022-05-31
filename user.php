@@ -140,7 +140,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-									<a class='float-right mr-5' href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
+									<a class='float-right mr-5' href="./change_password.php"><div class="btn btn-success">Đổi mật khẩu</div></a>
 								</div>
 							</div>
 						</div>
@@ -151,15 +151,15 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 								</div>
 								<div class="col-md-6">
 								<?php
-									$bg_color = 'form-control col-md-8 bg-success text-white';
-									if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
-										$bg_color = 'form-control col-md-8 bg-warning text-dark';
-									elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
-										$bg_color = 'form-control col-md-8 bg-danger text-white';
-									elseif ($user_data['ACTIVATED_STATE'] == 'vô hiệu hóa'):
-										$bg_color = 'form-control col-md-8 bg-secondary text-white';
-									endif;
-									if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
+$bg_color = 'form-control col-md-8 bg-success text-white';
+if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
+    $bg_color = 'form-control col-md-8 bg-warning text-dark';
+elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
+    $bg_color = 'form-control col-md-8 bg-danger text-white';
+elseif ($user_data['ACTIVATED_STATE'] == 'vô hiệu hóa'):
+    $bg_color = 'form-control col-md-8 bg-secondary text-white';
+endif;
+if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
 									<p class= '<?php echo $bg_color ?>' ><?php echo $user_data['ACTIVATED_STATE'] ?></p>
 								<?php endif;?>
 								</div>
