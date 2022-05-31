@@ -57,9 +57,9 @@ if (isset($_POST['is_confirmed'])) {
   </head>
   <body>
     <?php include_once './navbar_user.php'?>
-    <?php if (isset($error_message) && $error_message !== ""): ?>
+    <?php if (isset($error_message) && $error_message !== "") {?>
       <div class="alert alert-danger"><?php echo $error_message ?> </div>
-    <?php endif;?>
+    <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
       <form id='myForm' class="col-md-4 border main" action="./transaction.php" method="POST">
           <h1 class='ml-5'>Chuyển tiền</h1>
@@ -147,5 +147,6 @@ if (isset($_POST['is_confirmed'])) {
             </div>
         </div>
     </div>
+    <?php }?>
   </body>
 </html>
