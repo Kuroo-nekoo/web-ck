@@ -168,6 +168,38 @@ function get_user_data($user_id)
     return array('code' => 0, 'data' => $data);
 }
 
+function get_history_data($id)
+{
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY WHERE ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $id);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    return array('code' => 0, 'data' => $data);
+}
+
+function get_user_data_by_phone($phone_number)
+{
+    $conn = connect_database();
+    $sql = "SELECT * FROM ACCOUNT WHERE PHONE_NUMBER = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $phone_number);
+
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $result = $stm->get_result();
+    $data = $result->fetch_assoc();
+    return array('code' => 0, 'data' => $data);
+}
+
 function change_password($old_password, $new_password, $user_id)
 {
     $conn = connect_database();
@@ -242,6 +274,35 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
+function get_list_history() {
+    $conn = connect_database();
+    $sql = "SELECT * FROM HISTORY";
+    $result = $conn->query($sql);
+    $data = array();
+    while (($row = $result->fetch_assoc())) {
+        $data[] = $row;
+    }
+    if ($result->num_rows === 0) {
+        return array('code' => 1, 'error' => 'Empty data');
+    }
+    return array('code' => 0, 'data' => $data);
+}
+
+function history_sort_date($a, $b)
+{
+    return strtotime($b['TIME']) - strtotime($a['TIME']);
+}
+
+function get_list_history_sort_date() {
+    $data = get_list_history();
+    if ($data['code'] == 0) {
+        $result = $data['data'];
+        usort($result, 'history_sort_date');
+        return array('code' => 0, 'data' => $result);
+    }
+    return array('code' => 1, 'error' => 'Empty data');
+}
+
 function sort_date_created($a, $b)
 {
     return strtotime($b['DATE_CREATED']) - strtotime($a['DATE_CREATED']);
@@ -277,6 +338,20 @@ function update_state($user_id, $state)
     return array('code' => 0);
 }
 
+function update_state_history($id,$state) 
+{
+    $conn = connect_database();
+    $sql = "UPDATE HISTORY SET IS_ALLOW = '{$state}'  WHERE ID = ?";
+    $stm = $conn->prepare($sql);
+    $stm->bind_param('s', $id);
+    if (!$stm->execute()) {
+        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
+    }
+
+    $stm->execute();
+    return array('code' => 0);
+}
+
 function update_id_image($user_id, $front_id_image_dir, $back_id_image_dir)
 {
     $conn = connect_database();
@@ -303,16 +378,4 @@ function unlock($user_id)
     return array('code' => 0);
 }
 
-function update_id_card($user_id, $front_id_image_dir, $back_id_image_dir)
-{
-    $conn = connect_database();
-    $sql = "UPDATE ACCOUNT SET FRONT_ID_IMAGE_DIR = '{$front_id_image_dir}', BACK_ID_IMAGE_DIR = '{$back_id_image_dir}' WHERE USER_ID = ?";
-    $stm = $conn->prepare($sql);
-    $stm->bind_param('s', $user_id);
-    if (!$stm->execute()) {
-        return array('code' => 1, 'error' => 'Error: ' . $sql . "<br>" . $conn->error);
-    }
 
-    $stm->execute();
-    return array('code' => 0);
-}

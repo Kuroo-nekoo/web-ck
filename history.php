@@ -37,6 +37,8 @@ $result = $conn->query($sql);
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="./main.js"></script>
   </head>
   <body>
   <?php require_once 'navbar_admin.php'?>
@@ -66,7 +68,7 @@ while ($row = $result->fetch_assoc()) {
         <td><?php echo $row['ID']; ?></td>
         <td><?php echo $row['USER_ID']; ?></td>
         <td><?php echo $row['RECEIVER_PHONE']; ?></td>
-        <td><?php echo $row['AMOUNT']; ?></td>
+        <td oninput="formatCurrency(this,'blur')"><?php echo $row['AMOUNT']; ?></td>
         <td><?php echo $row['TIME']; ?></td>
         
 

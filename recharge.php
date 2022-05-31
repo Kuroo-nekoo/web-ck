@@ -170,7 +170,7 @@ require_once "./common.php";
     />
     <script
       src="http://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity=s"sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
       crossorigin="anonymous"
     ></script>
     <script
@@ -185,7 +185,7 @@ require_once "./common.php";
     ></script>
   </head>
   <body>
-    <?php include_once './navbar.php'?>
+    <?php include_once './navbar_user.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post"  ">
       <div class="text-danger h5">

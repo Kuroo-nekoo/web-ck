@@ -31,8 +31,9 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
     $name = basename($_FILES['back_id_image']['name']);
     move_uploaded_file($tmp_name, './uploads/' . $name);
     $back_id_image_dir = './uploads/' . $name;
-
     update_id_image($user_id, $front_id_image_dir, $back_id_image_dir);
+	update_state($user_id,'chờ xác minh');
+	header('Location: ./user.php' );
 }
 ?>
 
@@ -61,6 +62,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 				<input class="form-control col-md-8" id="name" name="name" type="text" value="<?php echo $user_data['FULL_NAME']; ?>" />
 			</div>
 			<div class="form-group form-row">
+<<<<<<< Updated upstream
 				<label for="email" class="col-md-4">Email:</label>
 				<input class="form-control col-md-8" id="email" name="email" type="text" value="<?php echo $user_data['EMAIL']; ?>" />
 			</div>
@@ -79,6 +81,26 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 			<div class="form-group form-row">
 				<label class="col-md-4" for="is_active">Trạng thái:</label>
 				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" />
+=======
+				<label for="email" class="col-md-3">Email:</label>
+				<input class="form-control col-md-8" id="email" name="email" type="text" value="<?php echo $user_data['EMAIL']; ?>" readonly/>
+			</div>
+			<div class="form-group form-row">
+				<label class="col-md-3" for="phone_number">Số điện thoại:</label>
+				<input class="form-control col-md-8" id="phone_number" name="phone_number" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" readonly/>
+			</div>
+			<div class="form-group form-row">
+				<label class="col-md-3" for="date_of_birth">Ngày sinh:</label>
+				<input class="form-control col-md-8" id="date_of_birth" name="date_of_birth" type="date" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
+			</div>
+			<div class="form-group form-row">
+				<label class="col-md-3" for="address">Địa chỉ:</label>
+				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
+			</div>
+			<div class="form-group form-row">
+				<label class="col-md-3" for="is_active">Trạng thái:</label>
+				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
+>>>>>>> Stashed changes
 			</div>
 				<div class="form-group form-row">
 					<label class="col-md-4" for="phone_number">Số điện thoại:</label>

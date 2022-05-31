@@ -133,9 +133,11 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="./style.css">
+    <script type="" src="http://localhost/main.js"></script>
   </head>
   <body>
-  <?php require_once 'navbar_user.php'?>
+    <?php include_once './navbar_user.php'?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4 border" action="transaction.php" method="post">
       <div class="text-danger h5">
@@ -153,12 +155,15 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
           />
         </div>
         <div class="form-group">
-          <label for="money">Số tiền: </label>
-          <input type="text" 
-          name="currency-field" 
+          <label for="money">Số tiền (VNĐ): </label>
+
+          <input 
+          class="form-control"
+          type="text" 
+          name="money" 
           id="currency-field" 
           pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" 
-          value="" data-type="currency" 
+          data-type="currency" 
           placeholder="Số tiền">
         </div>
         <div class="form-group">
@@ -177,11 +182,6 @@ if (isset($_POST['phone_number']) && isset($_POST['money'] )&& isset($_POST['fee
             class="form-control"
             name="content"
           />
-        </div>
-        <div class="form-group">
-          <label for="receiver_name">Người nhận:  
-        </label>
-          <input type="text" class="form-control" id="address" placeholder="Autofill" name="address">
         </div>
         <button type="submit" class="btn btn-success btn-block">Xác nhận chuyển</button>
       </form>

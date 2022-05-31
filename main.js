@@ -18,7 +18,27 @@ function getUserInfo(user_id) {
   location.replace("/user_info.php?user_id=" + user_id);
 }
 
+function getHistoryInfo(id) {
+  location.replace("/history_info.php?id=" + id);
+}
 
+function browse(id) {
+  var url = window.location.href
+  console.log(url)
+  $('#agree').click(function () {
+    location.replace(url + '&is_browsed=1');
+  })
+  $('#disagree').click(function () {
+    location.replace(url + '&is_browsed=0');
+  })
+}
+
+function formatMoney() {
+  var x = document.getElementById("money");
+  x = x.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+  document.getElementById("money").innerHTML = x;
+  console.log()
+}
 function verification(user_id) {
   $('.modal-title').html('Xác minh tài khoản');
   $('.modal-body').html('Bạn có muốn xác minh cho tài khoản này?');
@@ -57,4 +77,86 @@ function unlock(user_id) {
   $('#accept').click(function () {
     location.replace(url + '&is_unlock=1');
   })
+}
+$(document).ready(function () {
+  $("input[data-type='currency']").on({
+    keyup: function() {
+      formatCurrency($(this));
+    },
+    blur: function() { 
+      formatCurrency($(this), "blur");
+    }
+  });
+  var x = document.getElementById("money").innerHTML;
+  x = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(x)
+  document.getElementById("money").innerHTML = x;
+});
+
+function formatNumber(n) {
+  // format number 1000000 to 1,234,567
+  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
+function formatCurrency(input, blur) {
+  // get input value
+  var input_val = input.value();
+
+  // don't validate empty input
+  if (input_val === "") { return; }
+
+  // original length
+  var original_len = input_val.length;
+
+  // initial caret position 
+  var caret_pos = input.prop("selectionStart");
+    
+  // check for decimal
+  if (input_val.indexOf(".") >= 0) {
+
+    // get position of first decimal
+    // this prevents multiple decimals from
+    // being entered
+    var decimal_pos = input_val.indexOf(".");
+
+    // split number by decimal point
+    var left_side = input_val.substring(0, decimal_pos);
+    var right_side = input_val.substring(decimal_pos);
+
+    // add commas to left side of number
+    left_side = formatNumber(left_side);
+
+    // validate right side
+    right_side = formatNumber(right_side);
+    
+    // On blur make sure 2 numbers after decimal
+    if (blur === "blur") {
+      right_side += "00";
+    }
+    
+    // Limit decimal to only 2 digits
+    right_side = right_side.substring(0, 2);
+
+    // join number by .
+    input_val = left_side + "." + right_side;
+
+  } else {
+    // no decimal entered
+    // add commas to number
+    // remove all non-digits
+    input_val = formatNumber(input_val);
+    input_val = input_val;
+    
+    // final formatting
+    // if (blur === "blur") {
+    //   input_val += ".00";
+    // }
+  }
+
+  // send updated string to input
+  input.val(input_val);
+
+  // put caret back in the right position
+  var updated_len = input_val.length;
+  caret_pos = updated_len - original_len + caret_pos;
+  input[0].setSelectionRange(caret_pos, caret_pos);
 }
