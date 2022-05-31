@@ -31,7 +31,9 @@ if (isset($_POST['username']) && $_POST['password'] && !empty($_POST['username']
         } else {
             $data = login($username, $password);
 
-            if (isset($data['is_locked']) && $data['is_locked'] === 1) {
+            if (isset($data['activated_state']) && $data['activated_state'] === "vô hiệu hóa") {
+                $error_message = "tài khoản này đã bị vô hiệu hóa, vui lòng liên hệ tổng đài 18001008";
+            } else if (isset($data['is_locked']) && $data['is_locked'] === 1) {
                 $error_message = "Tài khoản đã bị khóa do nhập sai mật khẩu nhiều lần, vui lòng liên hệ quản trị viên để được hỗ trợ";
                 $is_locked = 1;
             } else if ($data['code'] === 0) {
@@ -107,6 +109,8 @@ if (isset($_SESSION['temp_lock_time'])) {
         </div>
       <?php } else if (isset($is_temp_locked) && $is_temp_locked === 1) {?>
         <div class="alert alert-danger"><?php echo $error_message ?></div>
+        <?php } else if (isset($data['activated_state']) && $data['activated_state'] === "vô hiệu hóa") {?>
+          <div class="alert alert-danger"><?php echo $error_message ?></div>
         <?php } else {?>
       <form class="col-4 border " action="login.php" method="POST" >
         <h1>Đăng nhập:</h1>
