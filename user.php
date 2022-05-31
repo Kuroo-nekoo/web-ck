@@ -3,8 +3,9 @@ require_once './common.php';
 require_once './db.php';
 
 session_start();
-if (isset($_SESSION['user_id'])) 
-	$user_id = $_SESSION['user_id'];
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+}
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ./login.php');
@@ -32,8 +33,8 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
     move_uploaded_file($tmp_name, './uploads/' . $name);
     $back_id_image_dir = './uploads/' . $name;
     update_id_image($user_id, $front_id_image_dir, $back_id_image_dir);
-	update_state($user_id,'chờ xác minh');
-	header('Location: ./user.php' );
+    update_state($user_id, 'chờ xác minh');
+    header('Location: ./user.php');
 }
 ?>
 
@@ -56,7 +57,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 <body>
 	<?php require_once 'navbar_user.php'?>
 	<div class="container emp-profile">
-		<form>
+		<form action="user.php" method="POST" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-4">
 					<div class="profile-img">
@@ -66,7 +67,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 				<div class="col-md-6">
 					<div class="profile-head">
 						<h5>
-							<?php echo $user_data['FULL_NAME']?>
+							<?php echo $user_data['FULL_NAME'] ?>
 						</h5>
 						<ul class="nav nav-tabs" id="myTab" role="tablist">
 							<li class="nav-item">
@@ -83,7 +84,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 				<div class="col-md-4">
 					<div class="profile-work">
 						<p>Số dư</p>
-						<div id='money' class="border w-75"><?php echo $user_data['BALANCE']?></div>
+						<div id='money' class="border w-75"><?php echo $user_data['BALANCE'] ?></div>
 					</div>
 				</div>
 				<div class="col-md-8">
@@ -94,7 +95,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>User name</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['USERNAME']?></p>
+									<p><?php echo $user_data['USERNAME'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -102,7 +103,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>Tên</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['FULL_NAME']?></p>
+									<p><?php echo $user_data['FULL_NAME'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -110,7 +111,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>Email</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['EMAIL']?></p>
+									<p><?php echo $user_data['EMAIL'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -118,7 +119,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>Số điện thoại</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['PHONE_NUMBER']?></p>
+									<p><?php echo $user_data['PHONE_NUMBER'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -126,7 +127,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>Ngày sinh</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['DATE_OF_BIRTH']?></p>
+									<p><?php echo $user_data['DATE_OF_BIRTH'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -134,7 +135,7 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									<label>Địa chỉ</label>
 								</div>
 								<div class="col-md-6">
-									<p><?php echo $user_data['ADDRESS']?></p>
+									<p><?php echo $user_data['ADDRESS'] ?></p>
 								</div>
 							</div>
 							<div class="row">
@@ -150,20 +151,20 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 								</div>
 								<div class="col-md-6">
 								<?php
-								if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
-									$bg_color = 'form-control col-md-8 bg-warning text-dark';
-								elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
-									$bg_color = 'form-control col-md-8 bg-danger text-white';
-								else:
-									$bg_color = 'form-control col-md-8 bg-secondary text-white';
-								endif;
-								if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
+if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
+    $bg_color = 'form-control col-md-8 bg-warning text-dark';
+elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
+    $bg_color = 'form-control col-md-8 bg-danger text-white';
+else:
+    $bg_color = 'form-control col-md-8 bg-secondary text-white';
+endif;
+if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
 									<p class= '<?php echo $bg_color ?>' ><?php echo $user_data['ACTIVATED_STATE'] ?></p>
-								<?php endif; ?>
+								<?php endif;?>
 								</div>
 							</div>
-							
-							<?php if($user_data['ACTIVATED_STATE'] == 'chờ cập nhật'): ?>
+
+							<?php if ($user_data['ACTIVATED_STATE'] == 'chờ cập nhật'): ?>
 								<form action="user.php" enctype="multipart/form-data" method="POST">
 								<div class="row">
 									<div class="col-md-6">
@@ -206,13 +207,13 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 									</div>
 								</div>
 								</form>
-									
+
 							<?php endif;?>
 						</div>
 					</div>
 				</div>
 			</div>
-		</form>           
+		</form>
     </div>
 </body>
 </html>

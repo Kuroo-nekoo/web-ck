@@ -1,7 +1,11 @@
 <?php
 require_once "./db.php";
 require_once "./common.php";
-
+session_start();
+$activated_state = $_SESSION['activated_state'];
+if ($activated_state === "chưa xác minh") {
+    $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
+}
 
 $conn = connect_database();
 $sql = "Select * from  history where type ='transaction'";
@@ -42,6 +46,9 @@ $result = $conn->query($sql);
   </head>
   <body>
   <?php require_once 'navbar_admin.php'?>
+  <?php if (isset($error_message) && $error_message !== "") {?>
+    <div class="alert alert-danger">echo $error_message</div>
+  <?php } else {?>
     <div class="container">
         <h2 style="text-align: center">Transaction History</h2>
 
@@ -62,25 +69,25 @@ $result = $conn->query($sql);
 
         <?php
 
-while ($row = $result->fetch_assoc()) {
-    ?>
+    while ($row = $result->fetch_assoc()) {
+        ?>
     <tr>
         <td><?php echo $row['ID']; ?></td>
         <td><?php echo $row['USER_ID']; ?></td>
         <td><?php echo $row['RECEIVER_PHONE']; ?></td>
         <td id='money'><?php echo $row['AMOUNT']; ?></td>
         <td><?php echo $row['TIME']; ?></td>
-        
+
 
     </tr>
     <?php
 }
-$conn->close();
-$conn = connect_database();
+    $conn->close();
+    $conn = connect_database();
 
-$sql1 = "Select * from  history where type ='recharge'";
-$result1 = $conn->query($sql1);
-?>
+    $sql1 = "Select * from  history where type ='recharge'";
+    $result1 = $conn->query($sql1);
+    ?>
 
  </table>
 
@@ -103,21 +110,22 @@ $result1 = $conn->query($sql1);
 
         <?php
 
-while ($row1 = $result1->fetch_assoc()) {
-    ?>
+    while ($row1 = $result1->fetch_assoc()) {
+        ?>
     <tr>
         <td><?php echo $row1['ID']; ?></td>
         <td><?php echo $row1['USER_ID']; ?></td>
         <td><?php echo $row1['AMOUNT']; ?></td>
         <td><?php echo $row1['TIME']; ?></td>
-        
+
 
     </tr>
     <?php
 }
-        
-?>
+
+    ?>
  </table>
 
+ <?php }?>
  </body>
 </html>

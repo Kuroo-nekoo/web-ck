@@ -16,7 +16,7 @@ if (isset($_SESSION['is_new_user'])) {
     check_new_user($is_new_user);
 }
 
-if (isset($_POST['username']) && $_POST['password']  && !empty($_POST['username']) && !empty($_POST['password'])) {
+if (isset($_POST['username']) && $_POST['password'] && !empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -38,8 +38,11 @@ if (isset($_POST['username']) && $_POST['password']  && !empty($_POST['username'
                 $is_new_user = $data['data']['IS_NEW_USER'];
                 unset($_SESSION['user_id']);
                 unset($_SESSION['is_new_user']);
+                unset($_SESSION['activated_state']);
                 $_SESSION['user_id'] = $data['data']['USER_ID'];
                 $_SESSION['is_new_user'] = $data['data']['IS_NEW_USER'];
+                $_SESSION['activated_state'] = $data['data']['ACTIVATED_STATE'];
+
                 if ($is_new_user === 1) {
                     header('Location: change_password_first_time.php');
                 } else {
@@ -49,8 +52,6 @@ if (isset($_POST['username']) && $_POST['password']  && !empty($_POST['username'
                 if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
                     $_SESSION['temp_lock_time'] = time();
                 }
-            } else if ($data['activated_state'] === 'chờ cập nhật') {
-                header('Location: update_id_image.php');
             }
         }
     }
