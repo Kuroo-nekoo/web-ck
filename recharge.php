@@ -178,6 +178,9 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
   </head>
   <body>
     <?php include_once './navbar_user.php'?>
+    <?php if (isset($error_message) && $error_message !== "") {?>
+      <div class="alert alert-danger"><?php echo $error_message ?></div>
+      <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
       <form name="rechargeForm" class="col-md-4 border" action="recharge.php" method="post"  ">
       <div class="text-danger h5">
@@ -226,5 +229,6 @@ if (isset($_POST['credit_id']) && isset($_POST['cvv']) && isset($_POST['expirati
         <button type="submit" class="btn btn-success btn-block" name="contact_action" >Xác nhận nạp thẻ</button>
       </form>
     </div>
+    <?php }?>
   </body>
 </html>

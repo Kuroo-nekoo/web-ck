@@ -47,7 +47,7 @@ $result = $conn->query($sql);
   <body>
   <?php require_once 'navbar_admin.php'?>
   <?php if (isset($error_message) && $error_message !== "") {?>
-    <div class="alert alert-danger">echo $error_message</div>
+    <div class="alert alert-danger"><?php echo $error_message ?></div>
   <?php } else {?>
     <div class="container">
         <h2 style="text-align: center">Transaction History</h2>

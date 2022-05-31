@@ -138,7 +138,7 @@ if (isset($_POST['phone_number']) && isset($_POST['money']) && isset($_POST['fee
   <body>
     <?php include_once './navbar_user.php'?>
     <?php if (isset($error_message) && $error_message !== "") {?>
-      <div class="alert alert-danger">echo $error_message</div>
+      <div class="alert alert-danger"><?php echo $error_message ?></div>
     <?php } else {?>
     <div class="d-flex justify-content-center align-items-center">
       <form class="col-md-4 border main" action="transaction.php" method="post">
