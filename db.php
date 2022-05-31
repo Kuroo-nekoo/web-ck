@@ -72,7 +72,9 @@ function login($username, $password)
 
     $result = $stm->get_result();
     $data = $result->fetch_assoc();
-    if (isset($data['IS_LOCKED']) && $data['IS_LOCKED'] === 1) {
+    if (isset($data['ACTIVATED_STATE']) && $data['ACTIVATED_STATE'] === "vô hiệu hóa") {
+        return array('code' => 1, 'error' => 'Tài khoản đã bị vô hiệu hóa', 'activated_state' => $data['ACTIVATED_STATE']);
+    } else if (isset($data['IS_LOCKED']) && $data['IS_LOCKED'] === 1) {
         return array('code' => 1, 'error' => 'Tài khoản đã bị khóa', 'is_locked' => 1);
     } else if ($result->num_rows === 0) {
         return array('code' => 1, 'error' => 'Sai tên đăng nhập');
@@ -274,7 +276,8 @@ function get_users_data()
     return array('code' => 0, 'data' => $data);
 }
 
-function get_list_history() {
+function get_list_history()
+{
     $conn = connect_database();
     $sql = "SELECT * FROM HISTORY";
     $result = $conn->query($sql);
@@ -293,7 +296,8 @@ function history_sort_date($a, $b)
     return strtotime($b['TIME']) - strtotime($a['TIME']);
 }
 
-function get_list_history_sort_date() {
+function get_list_history_sort_date()
+{
     $data = get_list_history();
     if ($data['code'] == 0) {
         $result = $data['data'];
@@ -338,7 +342,7 @@ function update_state($user_id, $state)
     return array('code' => 0);
 }
 
-function update_state_history($id,$state) 
+function update_state_history($id, $state)
 {
     $conn = connect_database();
     $sql = "UPDATE HISTORY SET IS_ALLOW = '{$state}'  WHERE ID = ?";
@@ -378,8 +382,7 @@ function unlock($user_id)
     return array('code' => 0);
 }
 
-
-function update_balance($user_id,$amount)
+function update_balance($user_id, $amount)
 {
     $conn = connect_database();
     $sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
@@ -393,23 +396,21 @@ function update_balance($user_id,$amount)
     return array('code' => 0);
 }
 
-
-function transaction($user_id, $phone_number, $money, $content, $who_pay) {
+function transaction($user_id, $phone_number, $money, $content, $who_pay)
+{
     $depositor = get_user_data($user_id)['data'];
-    if(get_user_data_by_phone($phone_number)['code'] == 1) {
+    if (get_user_data_by_phone($phone_number)['code'] == 1) {
         return array('code' => 1, 'error' => 'Không tìm thấy người dùng');
-    }
-    else {
+    } else {
         $receiver = get_user_data_by_phone($phone_number)['data'];
         $state_receiver = $receiver['ACTIVATED_STATE'];
-        if($state_receiver == 'chờ xác minh' or $state_receiver == 'chờ cập nhật') {
+        if ($state_receiver == 'chờ xác minh' or $state_receiver == 'chờ cập nhật') {
             return array('code' => 1, 'error' => 'Người nhận chưa xác minh');
-        }
-        else if ($state_receiver == 'đã bị khóa' or $state_receiver == 'vô hiệu hóa') {
-            return array('code' => 1, 'error')
+        } else if ($state_receiver == 'đã bị khóa' or $state_receiver == 'vô hiệu hóa') {
+            return array('code' => 1, 'error');
         }
     }
-    if($depositor['balance'] < $money) {
+    if ($depositor['balance'] < $money) {
         return array('code' => 1, 'error' => 'Số dư không đủ');
     }
 
