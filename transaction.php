@@ -11,7 +11,7 @@ if (!$_SESSION['user_id']) {
 }
 
 $activated_state = $_SESSION['activated_state'];
-if ($activated_state === "chưa xác minh") {
+if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
 $user_id = $_SESSION['user_id'];

@@ -3,7 +3,7 @@ require_once "./db.php";
 require_once "./common.php";
 session_start();
 $activated_state = $_SESSION['activated_state'];
-if ($activated_state === "chưa xác minh") {
+if ($activated_state === "chưa xác minh" || $activated_state === "chờ cập nhật") {
     $error_message = "Tính năng này chỉ dành cho người dùng đã xác minh";
 }
 
