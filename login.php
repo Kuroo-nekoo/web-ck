@@ -53,6 +53,8 @@ if (isset($_POST['username']) && $_POST['password'] && !empty($_POST['username']
             } else if ($data['code'] === 1) {
                 if (isset($data['abnormal_login_count']) && $data['abnormal_login_count'] === 1) {
                     $_SESSION['temp_lock_time'] = time();
+                } else {
+                    $error_message = $data['error'];
                 }
             }
         }
