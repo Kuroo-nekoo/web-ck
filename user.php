@@ -3,8 +3,8 @@ require_once './common.php';
 require_once './db.php';
 
 session_start();
-if (isset($_SESSION['user_id'])) {}
-$user_id = $_SESSION['user_id'];
+if (isset($_SESSION['user_id'])) 
+	$user_id = $_SESSION['user_id'];
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ./login.php');
@@ -49,105 +49,170 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="./style.css">
     <script src="./main.js"></script>
 </head>
 
 <body>
 	<?php require_once 'navbar_user.php'?>
-	<div class="col-md-6 mx-auto">
-		<form action="user.php" enctype="multipart/form-data" method="POST">
-			<div class="form-group form-row">
-				<label for="name" class="col-md-4">Tên người dùng:</label>
-				<input class="form-control col-md-8" id="name" name="name" type="text" value="<?php echo $user_data['FULL_NAME']; ?>" readonly/>
+	<div class="container emp-profile">
+		<form>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="profile-img">
+						<img src="./img/user.jpg" alt=""/>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="profile-head">
+						<h5>
+							<?php echo $user_data['FULL_NAME']?>
+						</h5>
+						<ul class="nav nav-tabs" id="myTab" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Trạng thái</a>
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
-			<div class="form-group form-row">
-				<label for="email" class="col-md-4">Email:</label>
-				<input class="form-control col-md-8" id="email" name="email" type="text" value="<?php echo $user_data['EMAIL']; ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="phone_number">Số điện thoại:</label>
-				<input class="form-control col-md-8" id="phone_number" name="phone_number" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
-				<input class="form-control col-md-8" id="date_of_birth" name="date_of_birth" type="date" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="address">Địa chỉ:</label>
-				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="is_active">Trạng thái:</label>
-				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
-				<input class="form-control col-md-8" type="text" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="address">Địa chỉ:</label>
-				<input class="form-control col-md-8" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
-			</div>
-			<?php
-			if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
-				$bg_color = 'form-control col-md-8 bg-warning text-dark';
-			elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
-				$bg_color = 'form-control col-md-8 bg-danger text-white';
-			else:
-				$bg_color = 'form-control col-md-8 bg-secondary text-white';
-			endif;
-			if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="is_active">Trạng thái:</label>
-				<input class= '<?php echo $bg_color ?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
-			</div>
-			<?php endif;?>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="profile-work">
+						<p>Số dư</p>
+						<div id='money' class="border w-75"><?php echo $user_data['BALANCE']?></div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="tab-content profile-tab" id="myTabContent">
+						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+							<div class="row">
+								<div class="col-md-6">
+									<label>User name</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['USERNAME']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<label>Tên</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['FULL_NAME']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<label>Email</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['EMAIL']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<label>Số điện thoại</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['PHONE_NUMBER']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<label>Ngày sinh</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['DATE_OF_BIRTH']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<label>Địa chỉ</label>
+								</div>
+								<div class="col-md-6">
+									<p><?php echo $user_data['ADDRESS']?></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 pull-right">
+									<a href="./change_password.php"><button class="btn btn-success">Đổi mật khẩu</button></a>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+							<div class="row">
+								<div class="col-md-6">
+									<label>Trạng thái</label>
+								</div>
+								<div class="col-md-6">
+								<?php
+								if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
+									$bg_color = 'form-control col-md-8 bg-warning text-dark';
+								elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
+									$bg_color = 'form-control col-md-8 bg-danger text-white';
+								else:
+									$bg_color = 'form-control col-md-8 bg-secondary text-white';
+								endif;
+								if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
+									<p class= '<?php echo $bg_color ?>' ><?php echo $user_data['ACTIVATED_STATE'] ?></p>
+								<?php endif; ?>
+								</div>
+							</div>
+							
+							<?php if($user_data['ACTIVATED_STATE'] == 'chờ cập nhật'): ?>
+								<form action="user.php" enctype="multipart/form-data" method="POST">
+								<div class="row">
+									<div class="col-md-6">
+										<label>Ảnh mặt trước CMND:</label>
+									</div>
+									<div class="col-md-6">
+										<button id='front_img' class="file-upload-btn col-md-3" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
+										<input
+											class="form-control-file"
+											type="file"
+											accept="image/*"
+											name="front_id_image"
+											id="front_id_image"
+											onchange="readURL(this, '#front','#front_id_image');"
+										/>
+										<img id="front" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<label>Ảnh mặt sau CMND:</label>
+									</div>
+									<div class="col-md-6">
+										<button id='back_img' class="file-upload-btn col-md-3" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
+										<input
+											class="form-control-file"
+											type="file"
+											accept="image/*"
+											name="back_id_image"
+											id="back_id_image"
+											onchange="readURL(this, '#back', '#back_id_image');"
 
-			<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="cmnd">CMND:</label>
-					<img class="id-card mr-3" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
-					<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
+										/>
+										<img id="back"/>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" name="update_id_image" >Cập nhật</button>
+									</div>
+								</div>
+								</form>
+									
+							<?php endif;?>
+						</div>
+					</div>
 				</div>
-			<?php else: ?>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="frontsideimg">Ảnh mặt trước CMND: </label>
-					<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
-					<input
-						class="form-control-file"
-						type="file"
-						accept="image/*"
-						name="front_id_image"
-						id="front_id_image"
-						onchange="readURL(this, '#front','#front_id_image');"
-					/>
-					<img id="front" />
-				</div>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="back_id_image">Ảnh mặt sau CMND: </label>
-					<button id='back_img' class="file-upload-btn col-md-2" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
-					<input
-						class="form-control-file"
-						type="file"
-						accept="image/*"
-						name="back_id_image"
-						id="back_id_image"
-						onchange="readURL(this, '#back', '#back_id_image');"
-
-					/>
-					<img id="back"/>
-				</div>
-			<?php endif;?>
-			<div class="d-flex">
-				<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
-				<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" name="update_id_image" >Cập nhật</button>
-				<?php endif;?>
-				<a href="./change_password.php"><button class="btn btn-success mr-3">Đổi mật khẩu</button></a>
 			</div>
-			</div>
-		</form>
-		</div>
-	</div>
+		</form>           
+    </div>
 </body>
 </html>

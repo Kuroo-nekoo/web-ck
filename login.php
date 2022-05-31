@@ -20,7 +20,7 @@ if (isset($_POST['username']) && $_POST['password']  && !empty($_POST['username'
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if ($_POST['username'] == 'admin' && $_POST['password'] == 'admin') {
+    if ($_POST['username'] == 'admin' && $_POST['password'] == 123456) {
         $_SESSION['is_admin'] = true;
         header('Location: admin.php');
     } else {
