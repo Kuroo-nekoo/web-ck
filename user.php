@@ -59,119 +59,92 @@ if (isset($_FILES['front_id_image']) && isset($_FILES['back_id_image'])
 		<form action="user.php" enctype="multipart/form-data" method="POST">
 			<div class="form-group form-row">
 				<label for="name" class="col-md-4">Tên người dùng:</label>
-				<input class="form-control col-md-8" id="name" name="name" type="text" value="<?php echo $user_data['FULL_NAME']; ?>" />
+				<input class="form-control col-md-8" id="name" name="name" type="text" value="<?php echo $user_data['FULL_NAME']; ?>" readonly/>
 			</div>
 			<div class="form-group form-row">
-<<<<<<< Updated upstream
 				<label for="email" class="col-md-4">Email:</label>
-				<input class="form-control col-md-8" id="email" name="email" type="text" value="<?php echo $user_data['EMAIL']; ?>" />
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="phone_number">Số điện thoại:</label>
-				<input class="form-control col-md-8" id="phone_number" name="phone_number" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" />
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
-				<input class="form-control col-md-8" id="date_of_birth" name="date_of_birth" type="date" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" />
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="address">Địa chỉ:</label>
-				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ADDRESS']; ?>" />
-			</div>
-			<div class="form-group form-row">
-				<label class="col-md-4" for="is_active">Trạng thái:</label>
-				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" />
-=======
-				<label for="email" class="col-md-3">Email:</label>
 				<input class="form-control col-md-8" id="email" name="email" type="text" value="<?php echo $user_data['EMAIL']; ?>" readonly/>
 			</div>
 			<div class="form-group form-row">
-				<label class="col-md-3" for="phone_number">Số điện thoại:</label>
+				<label class="col-md-4" for="phone_number">Số điện thoại:</label>
 				<input class="form-control col-md-8" id="phone_number" name="phone_number" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" readonly/>
 			</div>
 			<div class="form-group form-row">
-				<label class="col-md-3" for="date_of_birth">Ngày sinh:</label>
+				<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
 				<input class="form-control col-md-8" id="date_of_birth" name="date_of_birth" type="date" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
 			</div>
 			<div class="form-group form-row">
-				<label class="col-md-3" for="address">Địa chỉ:</label>
+				<label class="col-md-4" for="address">Địa chỉ:</label>
 				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
 			</div>
 			<div class="form-group form-row">
-				<label class="col-md-3" for="is_active">Trạng thái:</label>
+				<label class="col-md-4" for="is_active">Trạng thái:</label>
 				<input class="form-control col-md-8" id="address" name="address" type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
->>>>>>> Stashed changes
 			</div>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="phone_number">Số điện thoại:</label>
-					<input class="form-control col-md-8" type="text" value="<?php echo $user_data['PHONE_NUMBER']; ?>" readonly/>
-				</div>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
-					<input class="form-control col-md-8" type="text" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
-				</div>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="address">Địa chỉ:</label>
-					<input class="form-control col-md-8" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
-				</div>
-				<?php
-if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
-    $bg_color = 'form-control col-md-8 bg-warning text-dark';
-elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
-    $bg_color = 'form-control col-md-8 bg-danger text-white';
-else:
-    $bg_color = 'form-control col-md-8 bg-secondary text-white';
-endif;
-if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
-				<div class="form-group form-row">
-					<label class="col-md-4" for="is_active">Trạng thái:</label>
-					<input class= '<?php echo $bg_color ?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
-				</div>
-				<?php endif;?>
+			<div class="form-group form-row">
+				<label class="col-md-4" for="date_of_birth">Ngày sinh:</label>
+				<input class="form-control col-md-8" type="text" value="<?php echo $user_data['DATE_OF_BIRTH']; ?>" readonly/>
+			</div>
+			<div class="form-group form-row">
+				<label class="col-md-4" for="address">Địa chỉ:</label>
+				<input class="form-control col-md-8" type="text" value="<?php echo $user_data['ADDRESS']; ?>" readonly/>
+			</div>
+			<?php
+			if ($user_data['ACTIVATED_STATE'] == 'chờ xác minh' or $user_data['ACTIVATED_STATE'] == 'chờ cập nhật'):
+				$bg_color = 'form-control col-md-8 bg-warning text-dark';
+			elseif ($user_data['ACTIVATED_STATE'] == 'đã bị khóa'):
+				$bg_color = 'form-control col-md-8 bg-danger text-white';
+			else:
+				$bg_color = 'form-control col-md-8 bg-secondary text-white';
+			endif;
+			if ($user_data['ACTIVATED_STATE'] != 'đã xác minh'): ?>
+			<div class="form-group form-row">
+				<label class="col-md-4" for="is_active">Trạng thái:</label>
+				<input class= '<?php echo $bg_color ?>' type="text" value="<?php echo $user_data['ACTIVATED_STATE'] ?>" readonly/>
+			</div>
+			<?php endif;?>
 
+			<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
+				<div class="form-group form-row">
+					<label class="col-md-4" for="cmnd">CMND:</label>
+					<img class="id-card mr-3" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
+					<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
+				</div>
+			<?php else: ?>
+				<div class="form-group form-row">
+					<label class="col-md-4" for="frontsideimg">Ảnh mặt trước CMND: </label>
+					<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
+					<input
+						class="form-control-file"
+						type="file"
+						accept="image/*"
+						name="front_id_image"
+						id="front_id_image"
+						onchange="readURL(this, '#front','#front_id_image');"
+					/>
+					<img id="front" />
+				</div>
+				<div class="form-group form-row">
+					<label class="col-md-4" for="back_id_image">Ảnh mặt sau CMND: </label>
+					<button id='back_img' class="file-upload-btn col-md-2" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
+					<input
+						class="form-control-file"
+						type="file"
+						accept="image/*"
+						name="back_id_image"
+						id="back_id_image"
+						onchange="readURL(this, '#back', '#back_id_image');"
+
+					/>
+					<img id="back"/>
+				</div>
+			<?php endif;?>
+			<div class="d-flex">
 				<?php if ($user_data['ACTIVATED_STATE'] != 'chờ cập nhật'): ?>
-					<span class="col-md-4" for="cmnd">CMND:</span>
-					<div class="col-md-4" id="img-1">
-						<span>Mặt trước chứng minh</span>
-						<img class="id-card" src="<?php echo $user_data['FRONT_ID_IMAGE_DIR']; ?>" alt="mặt trước cmnd">
-					</div>
-					<div class="col-md-4" id="img-2">
-						<span>Mặt sau chứng minh</span>
-						<img class="id-card" src="<?php echo $user_data['BACK_ID_IMAGE_DIR']; ?>" alt="mặt sau cmnd">
-					</div>
-				<?php else: ?>
-					<div class="form-group form-row">
-						<label class="col-md-4" for="frontsideimg">Ảnh mặt trước CMND: </label>
-						<button id='front_img' class="file-upload-btn col-md-2" type="button" onclick="$('#front_id_image').trigger( 'click' )">Add Image</button>
-						<input
-							class="form-control-file"
-							type="file"
-							accept="image/*"
-							name="front_id_image"
-							id="front_id_image"
-							onchange="readURL(this, '#front','#front_id_image');"
-						/>
-						<img id="front" />
-					</div>
-					<div class="form-group form-row">
-						<label class="col-md-4" for="back_id_image">Ảnh mặt sau CMND: </label>
-						<button id='back_img' class="file-upload-btn col-md-2" type="button" onclick="$('#back_id_image').trigger( 'click' )">Add Image</button>
-						<input
-							class="form-control-file"
-							type="file"
-							accept="image/*"
-							name="back_id_image"
-							id="back_id_image"
-							onchange="readURL(this, '#back', '#back_id_image');"
-
-						/>
-						<img id="back"/>
-					</div>
+				<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" name="update_id_image" >Cập nhật</button>
 				<?php endif;?>
-				<div class="d-flex">
-					<button id='update' type="submit" class="btn btn-primary ml-auto mr-3" name="update_id_image" >Cập nhật</button>
-					<a href="./change_password.php"><button class="btn btn-success mr-3">Đổi mật khẩu</button></a>
-				</div>
+				<a href="./change_password.php"><button class="btn btn-success mr-3">Đổi mật khẩu</button></a>
+			</div>
 			</div>
 		</form>
 		</div>

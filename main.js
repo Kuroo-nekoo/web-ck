@@ -34,10 +34,12 @@ function browse(id) {
 }
 
 function formatMoney() {
-  var x = document.getElementById("money");
-  x = x.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-  document.getElementById("money").innerHTML = x;
-  console.log()
+  if(document.getElementById("money")) {
+    var x = document.getElementById("money").innerHTML;
+    x = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(x)
+    document.getElementById("money").innerHTML = x;
+  }
+  
 }
 function verification(user_id) {
   $('.modal-title').html('Xác minh tài khoản');
@@ -87,9 +89,7 @@ $(document).ready(function () {
       formatCurrency($(this), "blur");
     }
   });
-  var x = document.getElementById("money").innerHTML;
-  x = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(x)
-  document.getElementById("money").innerHTML = x;
+  formatMoney()
 });
 
 function formatNumber(n) {
