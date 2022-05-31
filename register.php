@@ -47,6 +47,8 @@ if (isset($_POST['email'])
     } else if ($data['code'] === 1) {
         $error_message = $data['error'];
     }
+} else {
+    $error_message = "Vui lòng điền đầy đủ thông tin";
 }
 ?>
 <!DOCTYPE html>

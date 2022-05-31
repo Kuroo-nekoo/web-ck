@@ -16,11 +16,11 @@ if (isset($_SESSION['is_new_user'])) {
     check_new_user($is_new_user);
 }
 
-if (isset($_POST['username']) && $_POST['password']) {
+if (isset($_POST['username']) && $_POST['password']  && !empty($_POST['username']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if ($_POST['username'] == 'admin' && $_POST['password'] == '123456') {
+    if ($_POST['username'] == 'admin' && $_POST['password'] == 'admin') {
         $_SESSION['is_admin'] = true;
         header('Location: admin.php');
     } else {
